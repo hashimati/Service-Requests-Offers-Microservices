@@ -1,0 +1,32 @@
+
+micronaut:
+  application:
+    name: UsersServices
+  server:
+    port: 8888
+---
+
+micronaut:
+  security:
+    enabled: false
+    endpoints:
+      login:
+        enabled: true
+      oauth:
+        enabled: true
+    token:
+      jwt:
+        enabled: true
+        signatures:
+          secret:
+            generator:
+              secret: "${JWT_GENERATOR_SIGNATURE_SECRET:pleaseChangeThisSecretForANewOne}"
+
+---
+
+eureka:
+  client:
+    enabled: true
+    registration:
+      enabled: true
+    defaultZone: "${EUREKA_HOST:localhost}:${EUREKA_PORT:8761}"
