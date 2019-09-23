@@ -1,0 +1,100 @@
+<templateSet group="Micronaut-Java">
+  <template name="mn-controller" value="package $PACKAGENAME$; &#10;&#10;import io.micronaut.http.annotation.Controller;&#10;import io.micronaut.http.annotation.Get;&#10;import io.micronaut.http.HttpStatus;&#10;&#10;@Controller(&quot;/$PATH$&quot;)&#10;public class $controllerName$ {&#10;&#10;    @Get(&quot;/&quot;)&#10;    public HttpStatus index() {&#10;        return HttpStatus.OK;&#10;    }&#10;}" description="Micronaut Controller" toReformat="false" toShortenFQNames="true">
+    <variable name="PACKAGENAME" expression="currentPackage()" defaultValue="" alwaysStopAt="true" />
+    <variable name="PATH" expression="" defaultValue="HelloWorld" alwaysStopAt="false" />
+    <variable name="controllerName" expression="fileNameWithoutExtension()" defaultValue="MyContoller" alwaysStopAt="false" />
+    <context>
+      <option name="JAVA_CODE" value="true" />
+    </context>
+  </template>
+  <template name="mn-client" value="package $PACKAGENAME$; &#10;&#10;&#10;import io.micronaut.http.client.annotation.Client;&#10;import io.micronaut.http.annotation.Get;&#10;import io.micronaut.http.HttpStatus;&#10;&#10;@Client(&quot;/$PATH$&quot;)&#10;public interface $clientNAME$ {&#10;&#10;    @Get(&quot;/&quot;)&#10;    public HttpStatus index();&#10;}" description="Micronaut Client" toReformat="false" toShortenFQNames="true" useStaticImport="true">
+    <variable name="PACKAGENAME" expression="currentPackage()" defaultValue="" alwaysStopAt="true" />
+    <variable name="PATH" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="clientNAME" expression="fileNameWithoutExtension()" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="JAVA_CODE" value="true" />
+    </context>
+  </template>
+  <template name="mn-controller-test" value="package $PACKAGENAME$; &#10;&#10;import io.micronaut.context.ApplicationContext;&#10;import io.micronaut.http.HttpStatus;&#10;import io.micronaut.http.client.RxHttpClient;&#10;import io.micronaut.runtime.server.EmbeddedServer;&#10;import io.micronaut.test.annotation.MicronautTest;&#10;&#10;import org.junit.jupiter.api.Test;&#10;&#10;import javax.inject.Inject;&#10;&#10;import static org.junit.jupiter.api.Assertions.assertEquals;&#10;&#10;@MicronautTest&#10;public class $controllerName$Test {&#10;&#10;    @Inject&#10;    EmbeddedServer embeddedServer;&#10;&#10;    @Test&#10;    public void testIndex() throws Exception {&#10;        try(RxHttpClient client = embeddedServer.getApplicationContext().createBean(RxHttpClient.class, embeddedServer.getURL())) {&#10;            assertEquals(HttpStatus.OK, client.toBlocking().exchange(&quot;/$Path$&quot;).status());&#10;        }&#10;    }&#10;}&#10;" description="Micronaut Controller Test" toReformat="false" toShortenFQNames="true">
+    <variable name="PACKAGENAME" expression="currentPackage()" defaultValue="" alwaysStopAt="true" />
+    <variable name="controllerName" expression="fileNameWithoutExtension()" defaultValue="Controller" alwaysStopAt="true" />
+    <variable name="Path" expression="" defaultValue="servicePATH" alwaysStopAt="true" />
+    <context>
+      <option name="JAVA_CODE" value="true" />
+    </context>
+  </template>
+  <template name="mn-websocket-client" value="package $PACKAGENAME$; &#10;&#10;import io.micronaut.websocket.WebSocketSession;&#10;import io.micronaut.websocket.annotation.*;&#10;&#10;@ClientWebSocket(&quot;/$PATH$/$TOPIC$/&quot;)&#10;public abstract class $WebsocketClient$ implements AutoCloseable {&#10;&#10;    private WebSocketSession session;&#10;&#10;    @OnOpen&#10;    public void onOpen(WebSocketSession session) {&#10;        this.session = session;&#10;    }&#10;&#10;    @OnMessage&#10;    public void onMessage() {}&#10;&#10;    public WebSocketSession getSession() {&#10;        return session;&#10;    }&#10;}" description="Micronaut WebSocket Client" toReformat="false" toShortenFQNames="true">
+    <variable name="PACKAGENAME" expression="currentPackage()" defaultValue="" alwaysStopAt="true" />
+    <variable name="PATH" expression="" defaultValue="PATH" alwaysStopAt="true" />
+    <variable name="TOPIC" expression="" defaultValue="TOPIC" alwaysStopAt="true" />
+    <variable name="WebsocketClient" expression="fileNameWithoutExtension()" defaultValue="WebSocketClient" alwaysStopAt="true" />
+    <context>
+      <option name="JAVA_CODE" value="true" />
+    </context>
+  </template>
+  <template name="mn-websocket-server" value="import io.micronaut.websocket.WebSocketBroadcaster;&#10;import io.micronaut.websocket.WebSocketSession;&#10;import io.micronaut.websocket.annotation.*;&#10;&#10;@ServerWebSocket(&quot;/$PATH$/$TOPIC$&quot;)&#10;public class $CLASSNAME$ {&#10;    private WebSocketBroadcaster broadcaster;&#10;&#10;    public $CLASSNAME$(WebSocketBroadcaster broadcaster) {&#10;        this.broadcaster = broadcaster;&#10;    }&#10;&#10;    @OnOpen&#10;    public void onOpen() {}&#10;&#10;    @OnMessage&#10;    public void onMessage() {}&#10;&#10;    @OnClose&#10;    public void onClose() {}&#10;&#10;}" description="Micronaut Websocket Server" toReformat="false" toShortenFQNames="true">
+    <variable name="PATH" expression="" defaultValue="PATH" alwaysStopAt="true" />
+    <variable name="TOPIC" expression="" defaultValue="TOPIC" alwaysStopAt="true" />
+    <variable name="CLASSNAME" expression="fileNameWithoutExtension()" defaultValue="className" alwaysStopAt="true" />
+    <context>
+      <option name="JAVA_CODE" value="true" />
+    </context>
+  </template>
+  <template name="mn-job" value="package $PACKAGENAME$; &#10;&#10;import javax.inject.Singleton;&#10;import io.micronaut.scheduling.annotation.Scheduled;&#10;&#10;@Singleton&#10;public class $ServiceName$ {&#10;&#10;    @Scheduled(fixedRate = &quot;5m&quot;)&#10;    public void process() {}&#10;}" description="Micronaut Job" toReformat="false" toShortenFQNames="true">
+    <variable name="PACKAGENAME" expression="currentPackage()" defaultValue="" alwaysStopAt="true" />
+    <variable name="ServiceName" expression="fileNameWithoutExtension()" defaultValue="ServiceName" alwaysStopAt="true" />
+    <context>
+      <option name="JAVA_CODE" value="true" />
+    </context>
+  </template>
+  <template name="mn-singleton" value="package $PACKAGENAME$; &#10;&#10;import javax.inject.Singleton;&#10;&#10;@Singleton&#10;public class $ClassName$ {&#10;&#10;}" description="Micronaut Bean/Singleton/Service" toReformat="false" toShortenFQNames="true" useStaticImport="true">
+    <variable name="PACKAGENAME" expression="currentPackage" defaultValue="" alwaysStopAt="true" />
+    <variable name="ClassName" expression="fileNameWithoutExtension()" defaultValue="ServiceName" alwaysStopAt="true" />
+    <context>
+      <option name="JAVA_CODE" value="true" />
+    </context>
+  </template>
+  <template name="mn-test" value="package $PACKAGENAME$; &#10;&#10;import io.micronaut.runtime.server.EmbeddedServer;&#10;import io.micronaut.test.annotation.MicronautTest;&#10;import org.junit.jupiter.api.Test;&#10;&#10;import javax.inject.Inject;&#10;&#10;import static org.junit.jupiter.api.Assertions.assertTrue;&#10;&#10;@MicronautTest&#10;public class ${className}Test {&#10;&#10;    @Inject&#10;    EmbeddedServer embeddedServer;&#10;&#10;    @Test&#10;    void testItWorks() {&#10;        assertTrue(embeddedServer.isRunning());&#10;    }&#10;&#10;}&#10;" description="Micronaut Test" toReformat="false" toShortenFQNames="true" useStaticImport="true">
+    <variable name="PACKAGENAME" expression="currentPackage()" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="JAVA_CODE" value="true" />
+    </context>
+  </template>
+  <template name="mn-mongodb-service" value="package $PACKAGENAME$;&#10;&#10;import com.mongodb.reactivestreams.client.MongoClient;&#10;import com.mongodb.reactivestreams.client.MongoCollection;&#10;import io.hashimati.offerservice.domains.Offer;&#10;import io.hashimati.requestservice.domains.Request;&#10;import io.reactivex.Single;&#10;import org.bson.BsonDocument;&#10;import org.bson.BsonString;&#10;&#10;import javax.inject.Singleton;&#10;&#10;@Singleton&#10;public class $className$ {&#10;&#10;    private final MongoClient mongoClient;&#10;    public OfferServices(MongoClient mongoClient)&#10;    {&#10;        this.mongoClient = mongoClient;&#10;    }&#10;    public Single&lt;$ObjType$&gt; save($ObjType$ var){&#10;&#10;        return   Single.fromPublisher(getCollection().insertOne(var))&#10;                .map(success-&gt;var);&#10;&#10;    }&#10;    private MongoCollection&lt;$ObjType$&gt; getCollection() {&#10;&#10;            return mongoClient&#10;                .getDatabase(&quot;$dbname$&quot;)&#10;                .getCollection(&quot;$collectionName$&quot;, $ObjType$.class);&#10;    }&#10;&#10;}&#10;" description="Mongodb Singleton Service" toReformat="false" toShortenFQNames="true">
+    <variable name="PACKAGENAME" expression="currentPackage()" defaultValue="" alwaysStopAt="true" />
+    <variable name="className" expression="fileNameWithoutExtension()" defaultValue="" alwaysStopAt="true" />
+    <variable name="ObjType" expression="classNameComplete()" defaultValue="" alwaysStopAt="true" />
+    <variable name="dbname" expression="" defaultValue="databasename" alwaysStopAt="true" />
+    <variable name="collectionName" expression="" defaultValue="collectionname" alwaysStopAt="true" />
+    <context>
+      <option name="JAVA_CODE" value="true" />
+    </context>
+  </template>
+  <template name="mn-authenticationProvider" value="package $PACKAGENAME$&#10;import io.micronaut.security.authentication.*;&#10;import io.reactivex.Flowable;&#10;import org.reactivestreams.Publisher;&#10;&#10;import javax.inject.Inject;&#10;import javax.inject.Singleton;&#10;import java.util.Arrays;&#10;import java.util.stream.Collectors;&#10;&#10;@Singleton&#10;public class AuthenticationProviderUserPassword implements AuthenticationProvider  {&#10;&#10;    // change user repository with your service which retieives the user info&#10;    @Inject&#10;    private UserRepository userRepository;&#10;&#10;    @Override&#10;    public Publisher&lt;AuthenticationResponse&gt; authenticate(AuthenticationRequest authenticationRequest) {&#10;        // replace this code with your code which retrieves the user information. &#10;       User user =  userRepository.findUserByUsernameAndPassword(&#10;                authenticationRequest.getIdentity().toString(),&#10;                authenticationRequest.getSecret().toString());&#10;        //&#10;   &#10;        if ( user !=null ) {&#10;            return Flowable.just(new UserDetails(user.getUsername(), user.getRoles()));&#10;        }&#10;        return Flowable.just(new AuthenticationFailed());&#10;    }&#10;}" description="Authentication Provider Implemenation" toReformat="false" toShortenFQNames="true">
+    <variable name="PACKAGENAME" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="JAVA_CODE" value="true" />
+    </context>
+  </template>
+  <template name="mn-secured" value="@Secured(SecurityRule.IS_AUTHENTICATED) " description="Secured Annotiation" toReformat="false" toShortenFQNames="true">
+    <context>
+      <option name="GROOVY" value="true" />
+      <option name="JAVA_CODE" value="true" />
+      <option name="KOTLIN" value="true" />
+    </context>
+  </template>
+  <template name="mn-securedroles" value="@Secured({&quot;ROLE_ADMIN&quot;, &quot;ROLE_X&quot;})" description="Secured Rolls Annotations" toReformat="false" toShortenFQNames="true">
+    <context>
+      <option name="GROOVY" value="true" />
+      <option name="JAVA_CODE" value="true" />
+      <option name="KOTLIN" value="true" />
+    </context>
+  </template>
+  <template name="mn-rolesallowed" value="@RolesAllowed({&quot;ROLE_ADMIN&quot;, &quot;ROLE_X&quot;})" description="Roles Allowed Annotiations" toReformat="false" toShortenFQNames="true">
+    <context>
+      <option name="GROOVY" value="true" />
+      <option name="JAVA_CODE" value="true" />
+      <option name="KOTLIN" value="true" />
+    </context>
+  </template>
+</templateSet>

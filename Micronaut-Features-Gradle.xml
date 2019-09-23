@@ -1,0 +1,71 @@
+<templateSet group="Micronaut-Features-Gradle">
+  <template name="mn-f-data-jdbc" value="implementation &quot;jakarta.persistence:jakarta.persistence-api:2.2.2&quot;&#10;implementation &quot;io.micronaut.data:micronaut-data-jdbc:$micronautDataVersion$&quot;&#10;runtime &quot;io.micronaut.configuration:micronaut-jdbc-tomcat&quot;" description="Micronaut Data JDBC Dependencies" toReformat="false" toShortenFQNames="true">
+    <variable name="micronautDataVersion" expression="" defaultValue="1.0.0.M1" alwaysStopAt="true" />
+    <context>
+      <option name="GROOVY_EXPRESSION" value="true" />
+    </context>
+  </template>
+  <template name="mn-f-view" value="compile 'io.micronaut:micronaut-views'" description="Micronaut Views" toReformat="false" toShortenFQNames="true">
+    <context>
+      <option name="GROOVY_EXPRESSION" value="true" />
+    </context>
+  </template>
+  <template name="mn-f-thymeleaf" value="compile 'io.micronaut:micronaut-views'&#10;runtime 'org.thymeleaf:thymeleaf:3.0.11.RELEASE'&#10;&#10;" description="Thymeleaf" toReformat="false" toShortenFQNames="true">
+    <context>
+      <option name="GROOVY_EXPRESSION" value="true" />
+    </context>
+  </template>
+  <template name="mn-f-Handlebars" value="compile 'io.micronaut:micronaut-views'&#10;runtime 'com.github.jknack:handlebars:4.1.0'" description="Handlebars Views" toReformat="false" toShortenFQNames="true">
+    <context>
+      <option name="GROOVY_EXPRESSION" value="true" />
+    </context>
+  </template>
+  <template name="mn-f-velocity" value="runtime 'org.apache.velocity:velocity-engine-core:2.0'" description="Apache Velocity" toReformat="false" toShortenFQNames="true">
+    <context>
+      <option name="GROOVY_EXPRESSION" value="true" />
+    </context>
+  </template>
+  <template name="mn-f-freemaker" value="compile 'io.micronaut:micronaut-views'&#10;runtime 'org.freemarker:freemarker:2.3.28'" description="Apache FreeMaker" toReformat="false" toShortenFQNames="true">
+    <context>
+      <option name="GROOVY_EXPRESSION" value="true" />
+    </context>
+  </template>
+  <template name="mn-f-thymeleaf-graal" value="compile 'io.micronaut:micronaut-views'&#10;compile 'io.micronaut:micronaut-views-thymeleaf'" description="Thymeleaf Graal support" toReformat="false" toShortenFQNames="true">
+    <context>
+      <option name="GROOVY_EXPRESSION" value="true" />
+    </context>
+  </template>
+  <template name="mn-f-thymleaf-graal-prop" value="Args = -H:IncludeResources=logback.xml|application.yml|views/.* \ &#10;       -H:Name=mn-graal-application \&#10;       -H:Class=example.micronaut.Application" toReformat="false" toShortenFQNames="true">
+    <context>
+      <option name="COMPLETION" value="false" />
+      <option name="JAVA_CODE" value="true" />
+      <option name="JAVA_COMMENT" value="false" />
+      <option name="JAVA_DECLARATION" value="false" />
+      <option name="JAVA_EXPRESSION" value="false" />
+      <option name="JAVA_SCRIPT" value="true" />
+      <option name="JAVA_STATEMENT" value="false" />
+      <option name="JAVA_STRING" value="false" />
+      <option name="JSX_HTML" value="false" />
+      <option name="JS_CLASS" value="false" />
+      <option name="JS_EXPRESSION" value="false" />
+      <option name="JS_STATEMENT" value="false" />
+      <option name="TS_CLASS" value="false" />
+      <option name="TS_EXPRESSION" value="false" />
+      <option name="TS_STATEMENT" value="false" />
+      <option name="TypeScript" value="true" />
+    </context>
+  </template>
+  <template name="mn-f-cspheader" value="micronaut:&#10;    views:&#10;        csp:&#10;            enabled: true&#10;            policy-directives:&#10;            report-only: false &#10;            filter-path: /**&#10;&#10;" description="View CSP Header Support" toReformat="false" toShortenFQNames="true" />
+  <template name="mn-f-views-securityIntegration" value="micronaut:&#10;    security:&#10;        views-model-decorator:&#10;            enabled: true&#10;            security-key: &quot;security&quot;&#10;            principal-name-key: name&#10;            attributes-key: attributes&#10;            " description="View Security Integration" toReformat="false" toShortenFQNames="true" />
+  <template name="mn-f-thymeleaf-config" value="micronaut:&#10;    views:&#10;        thymeleaf:&#10;            enabled: true&#10;            character-encoding: UTF-8&#10;            template-mode: &#10;            suffix:&#10;            force-suffix: false&#10;            force-template-mode: false&#10;            cacheable: false&#10;            #cache-ttlms: 3000&#10;            check-existence: false&#10;            #cache-ttl: " description="Thymeleaf Configuraiton" toReformat="false" toShortenFQNames="true" />
+  <template name="mf-secureity-intercept-url-map" value="micronaut:&#10;  security:&#10;    intercept-url-map:&#10;      -&#10;        pattern: /images/*&#10;        http-method: GET&#10;        access:&#10;          - isAnonymous() &#10;      -&#10;        pattern: /books&#10;        access:&#10;          - isAuthenticated() &#10;      -&#10;        pattern: /books/grails&#10;        http-method: GET&#10;        access:&#10;          - ROLE_GRAILS &#10;          - ROLE_GROOVY&#10;---" description="intercept Url Map Configuration" toReformat="false" toShortenFQNames="true">
+    <context>
+      <option name="OTHER" value="true" />
+    </context>
+  </template>
+  <template name="mn-builtin-endpoint" value="endpoints:&#10;  beans:&#10;    enabled: true&#10;    sensitive: true &#10;  info:&#10;    enabled: true&#10;    sensitive: false  " description="Built in EndPoints Configurations" toReformat="false" toShortenFQNames="true">
+    <context>
+      <option name="OTHER" value="true" />
+    </context>
+  </template>
+</templateSet>
