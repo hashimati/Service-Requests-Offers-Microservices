@@ -14,7 +14,7 @@ public class SomeController {
     public String hello()
     {
 
-        return "Hello from Requests Service";
+        return "Hello from offers Service";
 
     }
 }

@@ -36,6 +36,9 @@ dependencies {
 	implementation "io.micronaut:micronaut-discovery-client"
 	implementation "io.micronaut:micronaut-http-server-netty"
 	runtimeOnly "ch.qos.logback:logback-classic:1.2.3"
+	compile group: 'io.projectreactor', name: 'reactor-core', version: '3.2.12.RELEASE'
+	compile group: 'io.projectreactor.netty', name: 'reactor-netty', version: '0.8.11.RELEASE'
+	testCompile group: 'io.projectreactor', name: 'reactor-test', version: '3.2.12.RELEASE'
 }
 test.classpath += configurations.developmentOnly
 mainClassName = "io.hashimati.requestservice.Application"
