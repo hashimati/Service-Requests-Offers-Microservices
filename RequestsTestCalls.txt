@@ -1,0 +1,22 @@
+localhost:8080/requests/api/submit
+
+{
+	"type":"Maintenance", 
+	"title": "checking taps", 
+	"detail": "a request to check all taps in the house",
+	"requesterName": "Hashimati"
+
+}
+
+
+--------
+http://localhost:8080/offers/api/submit
+{
+
+	 "by":"Hashim" , "message":"I'll fix it for 200 Dollar" , "orderNumber":"Hashimati_0"
+
+}
+-----
+
+http://localhost:8080/requests/api/requests/reject/Hashimati_0/Hashim_1
+http://localhost:8080/requests/api/requests/accept/Hashimati_0/Hashim_1
