@@ -1,30 +1,49 @@
 package io.hashimati.requestservice.domains;
 
+import java.util.Date;
 
 import io.hashimati.requestservice.domains.enums.OfferStatus;
 
-public class Offer
-{
-    private String offerID, by , message , orderNumber;
-    private OfferStatus status;
+public class Offer {
+    private String id, by, message, orderNumber;
+    private OfferStatus status = OfferStatus.SENT;
+    private Date date , lastUpdate = date = new Date();
 
+    public Offer() {
+    }
 
-    public Offer(){}
+    public Date getLastUpdate() {
+        return lastUpdate;
+    }
+
+    public void setLastUpdate(Date lastUpdate) {
+        this.lastUpdate = lastUpdate;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
     public Offer(String offerID, String by, String message, String orderNumber, OfferStatus status) {
-            
-        this.offerID = offerID;
+    
+        this.id = offerID;
         this.by = by;
         this.message = message;
         this.orderNumber = orderNumber;
         this.status =  status;
     }
 
-    public String getOfferID() {
-        return offerID;
+    public String getId() {
+        
+        return this.id; 
     }
 
-    public void setOfferID(String offerID) {
-        this.offerID = offerID;
+    public void setId(String offerID) {
+        this.id = offerID;
     }
 
     public String getBy() {

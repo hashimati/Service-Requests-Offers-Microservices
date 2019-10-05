@@ -3,7 +3,7 @@ micronaut:
   application:
     name: RequestServices
   server:
-    port: 8090
+    port: -1
 ---
 micronaut:
   security:

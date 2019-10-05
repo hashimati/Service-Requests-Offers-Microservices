@@ -34,6 +34,17 @@ dependencies {
 	implementation "io.micronaut:micronaut-discovery-client"
 	implementation "io.micronaut:micronaut-http-server-netty"
 	runtimeOnly "ch.qos.logback:logback-classic:1.2.3"
+
+
+	annotationProcessor 'io.micronaut.data:micronaut-data-processor:1.0.0.M1'
+	runtime 'io.micronaut.configuration:micronaut-jdbc-hikari'
+	compile 'io.micronaut.data:micronaut-data-jdbc:1.0.0.M1'
+	compile group: 'mysql', name: 'mysql-connector-java', version: '8.0.17'
+	compileOnly 'jakarta.persistence:jakarta.persistence-api:2.2.2'
+	runtime "io.micronaut.configuration:micronaut-jdbc-tomcat"
+	compileOnly 'org.projectlombok:lombok:1.18.8'
+	annotationProcessor 'org.projectlombok:lombok:1.18.8'
+	compile 'io.micronaut.configuration:micronaut-flyway'
 }
 test.classpath += configurations.developmentOnly
 mainClassName = "io.hashimati.usersservices.Application"

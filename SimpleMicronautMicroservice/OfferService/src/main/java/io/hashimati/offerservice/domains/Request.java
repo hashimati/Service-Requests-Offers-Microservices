@@ -2,13 +2,34 @@ package io.hashimati.offerservice.domains;
 
 import io.hashimati.offerservice.domains.enums.RequestStatus;
 
-public class Request
-{
+import java.util.Date;
+
+
+public class Request {
     private String id, type, title, detail, requesterName;
     private RequestStatus status = RequestStatus.INITIATED;
+    private Date date , lastUpdate = date = new Date();
 
-    public Request(){
 
+    public Request() {
+
+ 
+    }
+
+    public Date getLastUpdate() {
+        return lastUpdate;
+    }
+
+    public void setLastUpdate(Date lastUpdate) {
+        this.lastUpdate = lastUpdate;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
     }
 
     public String getId() {
@@ -32,6 +53,7 @@ public class Request
     }
 
     public void setTitle(String title) {
+        
         this.title = title;
     }
 

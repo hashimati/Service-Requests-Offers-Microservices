@@ -5,7 +5,6 @@ import io.hashimati.offerservice.domains.Request;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.PathVariable;
 import io.micronaut.http.client.annotation.Client;
-import io.reactivex.Single;
 
 /**
  * RequestsClient
@@ -15,8 +14,8 @@ import io.reactivex.Single;
  @Client(id="request-services", path = "/api")
 public interface RequestsClient {
 
-    @Get("/requests/{requestNo}")
-    public Request findRequestByNo(@PathVariable(name ="requestNo" ) String requestNo); 
+    @Get("/requests/{requestId}")
+    public Request findRequestByNo(@PathVariable(value ="requestId" ) String requestNo); 
 
     
     
