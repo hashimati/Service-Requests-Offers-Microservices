@@ -36,7 +36,7 @@ dependencies {
 	runtimeOnly "ch.qos.logback:logback-classic:1.2.3"
 
 
-	annotationProcessor 'io.micronaut.data:micronaut-data-processor:1.0.0.M1'
+	annotationProcessor 'io.micronaut.data:micronaut-data-processor:1.0.0.M2'
 	runtime 'io.micronaut.configuration:micronaut-jdbc-hikari'
 	compile 'io.micronaut.data:micronaut-data-jdbc:1.0.0.M1'
 	compile group: 'mysql', name: 'mysql-connector-java', version: '8.0.17'
