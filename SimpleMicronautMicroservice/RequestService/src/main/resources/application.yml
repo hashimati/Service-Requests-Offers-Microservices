@@ -7,19 +7,14 @@ micronaut:
 ---
 micronaut:
   security:
-    enabled: false
-    endpoints:
-      login:
-        enabled: true
-      oauth:
-        enabled: true
+    enabled: true
     token:
       jwt:
         enabled: true
         signatures:
           secret:
-            generator:
-              secret: "${JWT_GENERATOR_SIGNATURE_SECRET:pleaseChangeThisSecretForANewOne}"
+            validation:
+              secret: pleaseChangeThisSecretForANewOne
 
 ---
 

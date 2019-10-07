@@ -1,0 +1,10 @@
+zuul:
+  sensitiveHeaders: Cookie,Set-Cookie
+  ignoredServices: '*'
+
+---
+security:
+  oauth2:
+    resource:
+      jwt:
+        key-value: pleaseChangeThisSecretForANewOne

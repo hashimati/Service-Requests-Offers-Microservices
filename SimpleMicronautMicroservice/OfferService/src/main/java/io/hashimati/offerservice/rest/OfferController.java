@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import io.hashimati.offerservice.constants.Roles;
 import io.hashimati.offerservice.domains.Offer;
 import io.hashimati.offerservice.domains.enums.OfferStatus;
 import io.hashimati.offerservice.services.OfferServices;
@@ -13,12 +14,11 @@ import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.PathVariable;
 import io.micronaut.http.annotation.Post;
+import io.micronaut.security.annotation.Secured;
 import io.reactivex.Single;
 
 @Controller("/api")
 public class OfferController {
-
-
     @Inject
     private OfferServices offerServices;
 
@@ -30,6 +30,7 @@ public class OfferController {
         return "Hello from offers"; 
     }
 
+    @Secured({Roles.USER})
     @Post("/submit")
     public Single<Offer> saveRequest(@Body Offer offer)
     {

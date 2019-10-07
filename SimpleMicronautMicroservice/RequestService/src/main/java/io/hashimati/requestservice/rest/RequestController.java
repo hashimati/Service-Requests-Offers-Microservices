@@ -4,6 +4,7 @@ package io.hashimati.requestservice.rest;
 import javax.inject.Inject;
 
 import io.hashimati.requestservice.clients.OffersClient;
+import io.hashimati.requestservice.constants.Roles;
 import io.hashimati.requestservice.domains.Request;
 import io.hashimati.requestservice.domains.enums.RequestStatus;
 import io.hashimati.requestservice.services.RequestServices;
@@ -12,6 +13,7 @@ import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.PathVariable;
 import io.micronaut.http.annotation.Post;
+import io.micronaut.security.annotation.Secured;
 import io.reactivex.Single;
 
 @Controller("/api")
@@ -25,6 +27,7 @@ public class RequestController {
     private OffersClient offersClient; 
 
 
+    @Secured({Roles.USER})
     @Post("/submit")
     public Single<Request> saveRequest(@Body Request request)
     {
