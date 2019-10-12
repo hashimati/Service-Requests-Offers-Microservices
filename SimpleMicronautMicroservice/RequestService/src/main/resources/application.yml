@@ -15,6 +15,12 @@ micronaut:
           secret:
             validation:
               secret: pleaseChangeThisSecretForANewOne
+      # writer:
+      #   header:
+      #     enabled: true
+      # propagation:
+      #   enabled: true
+      #   service-id-regex: "offers-services"
 
 ---
 

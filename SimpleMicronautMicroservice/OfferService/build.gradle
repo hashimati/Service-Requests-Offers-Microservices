@@ -39,6 +39,9 @@ dependencies {
 	compile group: 'io.projectreactor', name: 'reactor-core', version: '3.2.12.RELEASE'
 	compile group: 'io.projectreactor.netty', name: 'reactor-netty', version: '0.8.11.RELEASE'
 	testCompile group: 'io.projectreactor', name: 'reactor-test', version: '3.2.12.RELEASE'
+
+	compileOnly 'org.projectlombok:lombok:1.18.10'
+	annotationProcessor 'org.projectlombok:lombok:1.18.10'
 }
 test.classpath += configurations.developmentOnly
 mainClassName = "io.hashimati.offerservice.Application"

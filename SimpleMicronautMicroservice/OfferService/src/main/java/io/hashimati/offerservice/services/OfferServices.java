@@ -8,6 +8,8 @@ import io.hashimati.offerservice.domains.Offer;
 import io.hashimati.offerservice.domains.Request;
 import io.hashimati.offerservice.domains.enums.OfferStatus;
 import io.hashimati.offerservice.domains.enums.RequestStatus;
+import io.micronaut.context.ApplicationContext;
+import io.micronaut.security.utils.SecurityService;
 import io.reactivex.Flowable;
 import io.reactivex.Single;
 
@@ -26,6 +28,8 @@ public class OfferServices {
     @Inject 
      RequestsClient requestsClient; 
 
+    @Inject
+    SecurityService securityService; 
 
 
     private final MongoClient mongoClient;
@@ -35,13 +39,13 @@ public class OfferServices {
     }
 
 
-    public Single<Offer> save(Offer offer){
+    public Single<Offer> save(Offer offer, String token){
         
-        Request request = requestsClient.findRequestByNo(offer.getOrderNumber()); 
 
-        System.out.println(request);
         
-        if(request.getStatus() == RequestStatus.INITIATED){
+        Single<Request> request = requestsClient.findRequestByNo(offer.getOrderNumber(), token);
+        
+        if(request.blockingGet().getStatus() == RequestStatus.INITIATED){
         
         Long i = Single.fromPublisher(getCollection().countDocuments(new BsonDocument()
               //.append("orderNumber", new BsonString(offer.getOrderNumber()))
@@ -61,12 +65,12 @@ public class OfferServices {
         }
 
     }
-    public Single<List<Offer>> findOffersByRequestNo(String requestNo)
+    public Flowable<Offer> findOffersByRequestNo(String requestNo)
     {
         return Flowable
         .fromPublisher(getCollection()
         .find(new BsonDocument().append("orderNumber", new BsonString(requestNo))))
-        .toList(); 
+        
     }
     private MongoCollection<Offer> getCollection() {
 
@@ -76,16 +80,18 @@ public class OfferServices {
     }
 
 
-	public Single<String> takeAction(String requestId, String offerId, OfferStatus offerStatus){
+	public Single<String> takeAction(String requestId, String offerId, OfferStatus offerStatus,String username){
         BsonDocument filter = new BsonDocument()
         .append("_id", new BsonString(offerId)) 
-        .append("orderNumber", new BsonString(requestId)); 
-
+        .append("orderNumber", new BsonString(requestId))
+        .append("requesterName",new BsonString(username)); 
+        
         Offer offer = Single.fromPublisher(getCollection().find(
-        filter
+            filter
         )).blockingGet();
         
         offer.setStatus(offerStatus); 
+        
         
         return Single.fromPublisher(getCollection().findOneAndReplace(filter, offer))
         .map(x->"Success")

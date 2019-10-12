@@ -1,11 +1,21 @@
 package io.hashimati.usersservices.domains; 
 
 import io.micronaut.data.annotation.GeneratedValue;
+// import lombok.AllArgsConstructor;
+// import lombok.Data;
+// import lombok.EqualsAndHashCode;
+// import lombok.NoArgsConstructor;
+// import lombok.ToString;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 
+// @Data
+// @NoArgsConstructor
+// @AllArgsConstructor
+// @EqualsAndHashCode
+// @ToString
 @Entity
 @Table(name="systemuser")
 public class User

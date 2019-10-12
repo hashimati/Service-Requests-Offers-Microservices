@@ -10,6 +10,7 @@ import org.bson.BsonString;
 
 import io.hashimati.requestservice.domains.Request;
 import io.hashimati.requestservice.domains.enums.RequestStatus;
+import io.reactivex.Flowable;
 import io.reactivex.Single;
 
 
@@ -49,13 +50,17 @@ public class RequestServices {
     }
 
 
-	public Request findRequestByNo(String requestNo) {
+    public Single<Request> findRequestByNo(String requestNo) {
         
-        return Single.fromPublisher(getCollection().find(new BsonDocument().append("_id", new BsonString(requestNo)))).blockingGet(); 
+        return Single.fromPublisher(getCollection().find(new BsonDocument().append("_id", new BsonString(requestNo)))); 
         
-	}
+    }
+    
+    public Flowable<Request> findAll()
+    {
+            return Flowable.fromPublisher(getCollection().find(new BsonDocument().append("status", new BsonString(RequestStatus.INITIATED.toString())))); 
 
-
+    }
 
 
 	public Single<String> takeAction(String requestId, RequestStatus done){
