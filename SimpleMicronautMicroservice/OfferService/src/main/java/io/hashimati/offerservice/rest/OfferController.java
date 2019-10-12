@@ -1,8 +1,6 @@
 package io.hashimati.offerservice.rest;
 
-
 import java.security.Principal;
-
 import javax.inject.Inject;
 
 import io.hashimati.offerservice.clients.RequestsClient;
@@ -46,11 +44,10 @@ public class OfferController {
     @Secured({Roles.SERVICE_PROVIDER})
     @Get("/requests/get")
     public Flowable<Request> findAll(@Header("Authorization") String authentication){
-
         return requestsClient.findAll(authentication); 
 
     }
-    
+
     @Secured({Roles.SERVICE_PROVIDER, Roles.USER})
     @Get("/offers/{requestId}")
     public Flowable<Offer> findOffersByRequestNo(@PathVariable(value = "requestId") String requestId)
@@ -64,8 +61,7 @@ public class OfferController {
     {
         return offerServices.takeAction(requestId, offerId, OfferStatus.REJECTED, principal.getName()); 
     }
-
-
+    
     @Secured({Roles.USER})
      @Get("/offers/accept/{requestId}/{offerId}")
 	public Single<String> acceptOffer(@PathVariable(value = "requestId") String requestId, @PathVariable(value = "offerId") String offerId, Principal principal){
