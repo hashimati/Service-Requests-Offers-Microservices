@@ -1,25 +1,22 @@
 package io.hashimati.offerservice.services;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import com.mongodb.reactivestreams.client.MongoClient;
 import com.mongodb.reactivestreams.client.MongoCollection;
+
+import org.bson.BsonDocument;
+import org.bson.BsonString;
 
 import io.hashimati.offerservice.clients.RequestsClient;
 import io.hashimati.offerservice.domains.Offer;
 import io.hashimati.offerservice.domains.Request;
 import io.hashimati.offerservice.domains.enums.OfferStatus;
 import io.hashimati.offerservice.domains.enums.RequestStatus;
-import io.micronaut.context.ApplicationContext;
 import io.micronaut.security.utils.SecurityService;
 import io.reactivex.Flowable;
 import io.reactivex.Single;
-
-import org.bson.BsonDocument;
-import org.bson.BsonString;
-
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
 
 @Singleton
 public class OfferServices {
@@ -69,7 +66,7 @@ public class OfferServices {
     {
         return Flowable
         .fromPublisher(getCollection()
-        .find(new BsonDocument().append("orderNumber", new BsonString(requestNo))))
+        .find(new BsonDocument().append("orderNumber", new BsonString(requestNo)))); 
         
     }
     private MongoCollection<Offer> getCollection() {

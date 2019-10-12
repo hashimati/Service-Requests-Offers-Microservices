@@ -2,7 +2,6 @@ package io.hashimati.offerservice.rest;
 
 
 import java.security.Principal;
-import java.util.List;
 
 import javax.inject.Inject;
 
