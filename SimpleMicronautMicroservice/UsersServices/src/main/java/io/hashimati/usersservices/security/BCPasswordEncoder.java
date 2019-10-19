@@ -3,7 +3,6 @@ package io.hashimati.usersservices.security;
 import javax.inject.Singleton;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import io.micronaut.security.authentication.providers.PasswordEncoder;
 
 
 /**
@@ -11,16 +10,15 @@ import io.micronaut.security.authentication.providers.PasswordEncoder;
  */
 
  @Singleton
-public class BCPasswordEncoder implements PasswordEncoder{
+public class BCPasswordEncoder{
     org.springframework.security.crypto.password.PasswordEncoder delegate = new BCryptPasswordEncoder();
     
-    @Override
+    
     public String encode(String rawPassword) {
         // TODO Auto-generated method stub
         return delegate.encode(rawPassword);
     }
 
-    @Override
     public boolean matches(String rawPassword, String encodedPassword) {
         // TODO Auto-generated method stub
         return delegate.matches(rawPassword, encodedPassword);

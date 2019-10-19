@@ -6,6 +6,7 @@ import javax.inject.Inject;
 import io.hashimati.usersservices.constants.Roles;
 import io.hashimati.usersservices.domains.User;
 import io.hashimati.usersservices.repository.UserRepository;
+import io.hashimati.usersservices.security.BCPasswordEncoder;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.PathVariable;
@@ -24,6 +25,10 @@ public class UserController {
     @Inject
     UserRepository userRepository; 
 
+    
+    @Inject
+    private BCPasswordEncoder bCPasswordEncoder; 
+
 
     @Secured(SecurityRule.IS_ANONYMOUS)
     @Post("/signup/{role}")
@@ -33,6 +38,8 @@ public class UserController {
         if(role.equals(Roles.USER) || role.equals(Roles.SERVICE_PROVIDER))  
         {
             user.setRoles(role);
+
+            user.setPassword(bCPasswordEncoder.encode(user.getPassword()));
 
             return userRepository.save(user) != null? Single.just("done!") : Single.just("failed"); 
 
