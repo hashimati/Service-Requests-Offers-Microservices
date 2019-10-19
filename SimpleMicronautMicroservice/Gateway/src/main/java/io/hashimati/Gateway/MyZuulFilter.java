@@ -1,11 +1,10 @@
 package io.hashimati.Gateway;
 
+import javax.servlet.http.HttpServletRequest;
+
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
 import com.netflix.zuul.exception.ZuulException;
-import org.springframework.stereotype.Component;
-
-import javax.servlet.http.HttpServletRequest;
 
 public class MyZuulFilter extends ZuulFilter {
     @Override

@@ -29,7 +29,7 @@ public class UserController {
     @Post("/signup/{role}")
     public Single<String> signUp(@Body User user, @PathVariable(value = "role") String role) 
     {
-        
+    
         if(role.equals(Roles.USER) || role.equals(Roles.SERVICE_PROVIDER))  
         {
             user.setRoles(role);

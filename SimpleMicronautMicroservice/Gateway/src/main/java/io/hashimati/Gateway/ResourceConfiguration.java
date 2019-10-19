@@ -18,6 +18,8 @@ public class ResourceConfiguration extends ResourceServerConfigurerAdapter
         http.authorizeRequests()
           .antMatchers("/uaa/**")
           .permitAll()
+          .antMatchers("/login")
+          .permitAll()
           .antMatchers("/**")
       .authenticated();
     }

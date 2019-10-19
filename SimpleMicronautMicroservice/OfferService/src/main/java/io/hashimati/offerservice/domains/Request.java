@@ -15,7 +15,7 @@ import java.util.Date;
 @ToString
 @EqualsAndHashCode
 public class Request {
-    private String id, type, title, detail, requesterName;
+    private String id, type, title, detail, requesterName, address;
     private RequestStatus status = RequestStatus.INITIATED;
     private Date date , lastUpdate = date = new Date();
 }

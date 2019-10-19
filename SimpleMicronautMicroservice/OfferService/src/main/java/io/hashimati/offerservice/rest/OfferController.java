@@ -1,6 +1,7 @@
 package io.hashimati.offerservice.rest;
 
 import java.security.Principal;
+
 import javax.inject.Inject;
 
 import io.hashimati.offerservice.clients.RequestsClient;
@@ -37,7 +38,7 @@ public class OfferController {
     @Post("/submit")
     public Single<Offer> saveRequest(@Body Offer offer, Principal principal,  @Header("Authorization") String authentication)
     {
-        offer.setBy(principal.getName());   
+        offer.setProviderName(principal.getName());   
         return offerServices.save(offer, authentication);
     }
 

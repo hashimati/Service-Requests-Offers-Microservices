@@ -42,14 +42,16 @@ public class OfferServices {
         
         Single<Request> request = requestsClient.findRequestByNo(offer.getOrderNumber(), token);
         
+        request.doOnError(System.out::println);
+        
         if(request.blockingGet().getStatus() == RequestStatus.INITIATED){
         
         Long i = Single.fromPublisher(getCollection().countDocuments(new BsonDocument()
               //.append("orderNumber", new BsonString(offer.getOrderNumber()))
-                    .append("by", new BsonString(offer.getBy()))))
+                    .append("providerName", new BsonString(offer.getProviderName()))))
                     .blockingGet();  
 
-        offer.setId(offer.getBy() + "_" + (i.longValue() + 1) ); 
+        offer.setId(offer.getProviderName() + "_" + (i.longValue() + 1) ); 
         return Single.fromPublisher(getCollection().insertOne(offer))
                 .map(success->offer);
         }
@@ -71,6 +73,7 @@ public class OfferServices {
     }
     private MongoCollection<Offer> getCollection() {
 
+    
             return mongoClient
                 .getDatabase("requestsDB")
                 .getCollection("offers", Offer.class);

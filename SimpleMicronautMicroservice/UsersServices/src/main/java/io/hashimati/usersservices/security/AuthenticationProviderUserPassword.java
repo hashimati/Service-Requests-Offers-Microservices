@@ -22,12 +22,15 @@ public class AuthenticationProviderUserPassword implements AuthenticationProvide
     @Inject
     private UserRepository userRepository;
 
+    @Inject 
+    private BCPasswordEncoder bCPasswordEncoder; 
+
     @Override
     public Publisher<AuthenticationResponse> authenticate(AuthenticationRequest authenticationRequest) {
-       User user =  userRepository.findUserByUsernameAndPassword(
-                authenticationRequest.getIdentity().toString(),
-                authenticationRequest.getSecret().toString());
-        if ( user !=null ) {
+
+        User user = userRepository.findUserByUsername(authenticationRequest.getIdentity().toString());  
+        
+        if ( user !=null && bCPasswordEncoder.matches(authenticationRequest.getSecret().toString(), user.getPassword())) {
             return Flowable.just(new UserDetails(user.getUsername(),
                     Arrays.asList(user.getRoles()
                             .replace(" ", "")
