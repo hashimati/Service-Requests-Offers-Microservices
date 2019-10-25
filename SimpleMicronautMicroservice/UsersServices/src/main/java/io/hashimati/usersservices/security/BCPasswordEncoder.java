@@ -1,30 +1,17 @@
 package io.hashimati.usersservices.security;
 
-import javax.inject.Singleton;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
-
-
+import org.springframework.security.crypto.password.PasswordEncoder;
+import io.micronaut.context.annotation.Factory;
+import io.micronaut.context.annotation.Prototype;
 /**
  * BCPasswordEncoder
  */
+ @Factory
+ public class BCPasswordEncoder{    
+    @Prototype
+    public PasswordEncoder passwordEncoder(){
 
- @Singleton
-public class BCPasswordEncoder{
-    org.springframework.security.crypto.password.PasswordEncoder delegate = new BCryptPasswordEncoder();
-    
-    
-    public String encode(String rawPassword) {
-        // TODO Auto-generated method stub
-        return delegate.encode(rawPassword);
+        return new BCryptPasswordEncoder();
     }
-
-    public boolean matches(String rawPassword, String encodedPassword) {
-        // TODO Auto-generated method stub
-        return delegate.matches(rawPassword, encodedPassword);
-    }
-
-
-
-    
 }

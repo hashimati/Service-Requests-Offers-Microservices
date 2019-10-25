@@ -1,3 +1,8 @@
+
+/**
+ * @author Ahmed Al Hashmi @Hashimati
+ *
+ */
 package io.hashimati.usersservices.domains; 
 
 import io.micronaut.data.annotation.GeneratedValue;
@@ -16,8 +21,8 @@ import javax.validation.constraints.NotNull;
 // @AllArgsConstructor
 // @EqualsAndHashCode
 // @ToString
-@Entity
-@Table(name="systemuser")
+@Entity(name = "users")
+@Table(name="users")
 public class User
 {
 

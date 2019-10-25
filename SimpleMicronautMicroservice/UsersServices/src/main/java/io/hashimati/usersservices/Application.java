@@ -1,3 +1,8 @@
+
+/**
+ * @author Ahmed Al Hashmi @Hashimati
+ *
+ */
 package io.hashimati.usersservices;
 
 import javax.inject.Inject;
@@ -5,10 +10,11 @@ import javax.inject.Inject;
 import io.hashimati.usersservices.constants.Roles;
 import io.hashimati.usersservices.domains.User;
 import io.hashimati.usersservices.repository.UserRepository;
-import io.hashimati.usersservices.security.BCPasswordEncoder;
 import io.micronaut.context.event.StartupEvent;
 import io.micronaut.runtime.Micronaut;
 import io.micronaut.runtime.event.annotation.EventListener;
+import org.springframework.security.crypto.password.PasswordEncoder; 
+
 
 public class Application {
 
@@ -22,18 +28,20 @@ public class Application {
     private UserRepository userRepository; 
 
     @Inject
-    private BCPasswordEncoder bCPasswordEncoder; 
+    private PasswordEncoder passwordEncoder; 
     @EventListener
     void init(StartupEvent startupEvent){
         
-        User ahmed = new User("Ahmed",bCPasswordEncoder.encode("hello@1234")); 
+        User ahmed = new User("Ahmed",passwordEncoder.encode("hello@1234")); 
         ahmed.setRoles(Roles.USER);
 
-        User hashim = new User("Hashim", bCPasswordEncoder.encode("hello@1234")); 
+        User hashim = new User("Hashim", passwordEncoder.encode("hello@1234")); 
         hashim.setRoles(Roles.SERVICE_PROVIDER);
-        
-        userRepository.save(ahmed); 
-        userRepository.save(hashim); 
+  
+        if(!userRepository.existsByUsername(ahmed.getUsername()))
+            userRepository.save(ahmed); 
+        if(!userRepository.existsByUsername(hashim.getUsername()))    
+            userRepository.save(hashim); 
 
     }
 }

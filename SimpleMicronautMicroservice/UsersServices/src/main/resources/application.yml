@@ -50,16 +50,27 @@ consul:
 jackson:
   bean-introspection-module: true
 ---
+
 datasources:
-  default:
+  users:
     url: jdbc:mysql://127.0.0.1:3306/helloworlddb
     driverClassName: com.mysql.cj.jdbc.Driver
     username: root
     password: 'Hello@1234'
-    schema-generate: CREATE_DROP #uncomment if you want drop the database everytime you restart the service
+    # schema-generate: CREATE_DROP #uncomment if you want drop the database everytime you restart the service
     dialect: MYSQL
+    
+
+
 ---
-flyway:
+liquibase:
   datasources:
-    default:
-      locations: classpath:databasemigrations
+    users:
+      change-log: 'classpath:db/liquibase-changelog.xml'
+        
+# flyway:
+#   datasources:
+#     default:
+#       locations: classpath:databasemigrations
+#     users:
+#       locations: classpath:databasemigrations
