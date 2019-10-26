@@ -38,7 +38,7 @@ dependencies {
 	runtimeOnly "ch.qos.logback:logback-classic:1.2.3"
 
 
-	annotationProcessor 'io.micronaut.data:micronaut-data-processor:1.0.0.M4'
+	annotationProcessor 'io.micronaut.data:micronaut-data-processor:1.0.0.M3'
 	runtime 'io.micronaut.configuration:micronaut-jdbc-hikari'
 	compile 'io.micronaut.data:micronaut-data-jdbc:1.0.0.M1'
 	compile group: 'mysql', name: 'mysql-connector-java', version: '8.0.17'
@@ -48,11 +48,14 @@ dependencies {
 	// compile 'io.micronaut.configuration:micronaut-flyway'
 	compile 'io.micronaut.configuration:micronaut-liquibase'
 
-// https://mvnrepository.com/artifact/org.springframework.security/spring-security-crypto
-compile group: 'org.springframework.security', name: 'spring-security-crypto', version: '5.2.0.RELEASE'
-
+	// https://mvnrepository.com/artifact/org.springframework.security/spring-security-crypto
+	compile group: 'org.springframework.security', name: 'spring-security-crypto', version: '5.2.0.RELEASE'
+	// https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
+	compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.10.0'
+		compileOnly "com.fasterxml.jackson.core:jackson-annotations:2.10.0"
 	compileOnly 'org.projectlombok:lombok:1.18.10'
 	annotationProcessor 'org.projectlombok:lombok:1.18.10'
+	
 
 }
 test.classpath += configurations.developmentOnly

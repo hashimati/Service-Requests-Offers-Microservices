@@ -6,7 +6,8 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.reactivestreams.Publisher;
-import org.springframework.security.crypto.password.PasswordEncoder; 
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 import io.hashimati.usersservices.domains.User;
 import io.hashimati.usersservices.repository.UserRepository;
 import io.micronaut.security.authentication.AuthenticationFailed;
@@ -15,7 +16,11 @@ import io.micronaut.security.authentication.AuthenticationRequest;
 import io.micronaut.security.authentication.AuthenticationResponse;
 import io.micronaut.security.authentication.UserDetails;
 import io.reactivex.Flowable;
-import io.reactivex.Single;
+
+/**
+ * @author Ahmed Al Hashmi @Hashimati
+ *
+ */
 
 @Singleton
 public class AuthenticationProviderUserPassword implements AuthenticationProvider  {

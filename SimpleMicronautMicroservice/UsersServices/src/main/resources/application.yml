@@ -45,19 +45,16 @@ consul:
     registration:
       enabled: true
     defaultZone: "${CONSUL_HOST:localhost}:${CONSUL_PORT:8500}"
-
 ---
 jackson:
   bean-introspection-module: true
 ---
-
 datasources:
   users:
     url: jdbc:mysql://127.0.0.1:3306/helloworlddb
     driverClassName: com.mysql.cj.jdbc.Driver
     username: root
     password: 'Hello@1234'
-    # schema-generate: CREATE_DROP #uncomment if you want drop the database everytime you restart the service
     dialect: MYSQL
     
 
