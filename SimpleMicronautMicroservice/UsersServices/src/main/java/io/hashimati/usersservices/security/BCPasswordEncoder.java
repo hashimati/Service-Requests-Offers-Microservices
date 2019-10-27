@@ -6,7 +6,10 @@ import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.annotation.Prototype;
 /**
  * BCPasswordEncoder
+ * @author Ahmed Al Hashmi @Hashimati
+ *
  */
+ 
  @Factory
  public class BCPasswordEncoder{    
     @Prototype

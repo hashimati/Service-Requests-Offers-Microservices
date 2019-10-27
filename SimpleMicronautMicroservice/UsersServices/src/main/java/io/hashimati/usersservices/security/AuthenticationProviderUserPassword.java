@@ -11,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import io.hashimati.usersservices.domains.User;
 import io.hashimati.usersservices.repository.UserRepository;
 import io.micronaut.security.authentication.AuthenticationFailed;
+import io.micronaut.security.authentication.AuthenticationFailureReason;
 import io.micronaut.security.authentication.AuthenticationProvider;
 import io.micronaut.security.authentication.AuthenticationRequest;
 import io.micronaut.security.authentication.AuthenticationResponse;
@@ -30,17 +31,28 @@ public class AuthenticationProviderUserPassword implements AuthenticationProvide
 
     @Inject 
     private PasswordEncoder PasswordEncoder; 
+
+
     @Override
     public Publisher<AuthenticationResponse> authenticate(AuthenticationRequest authenticationRequest) {
 
+        //if User is not exist return Authentication Failed
+        if(!userRepository.existsByUsername(authenticationRequest.getIdentity().toString())){
+            
+            return Flowable.just(new AuthenticationFailed(AuthenticationFailureReason.USER_NOT_FOUND)); 
+        }
+
+
         User user = userRepository.findUserByUsername(authenticationRequest.getIdentity().toString());  
         
-        if ( user !=null && PasswordEncoder.matches(authenticationRequest.getSecret().toString(), user.getPassword())) {
+    
+        if ( PasswordEncoder.matches(authenticationRequest.getSecret().toString(), user.getPassword())) {
             return Flowable.just(new UserDetails(user.getUsername(),
                     Arrays.asList(user.getRoles()
                             .replace(" ", "")
                             .split(","))));
         }
-        return Flowable.just(new AuthenticationFailed());
+        
+        return Flowable.just(new AuthenticationFailed(AuthenticationFailureReason.CREDENTIALS_DO_NOT_MATCH)); 
     }
 }
