@@ -1,0 +1,1 @@
+mn create-app io-hashimati-offerservice --profile service --lang java --build gradle--features security-jwt --features mongo-reactive --features discovery-eureka

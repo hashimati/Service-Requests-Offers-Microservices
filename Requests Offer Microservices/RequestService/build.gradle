@@ -1,0 +1,60 @@
+plugins {
+id "net.ltgt.apt-eclipse" version "0.21"
+id "com.github.johnrengelman.shadow" version "5.0.0"
+}
+apply plugin:"application"
+sourceCompatibility='1.8'
+targetCompatibility='1.8'
+version "0.1"
+group "io.hashimati"
+repositories {
+mavenCentral()
+	maven { url "https://jcenter.bintray.com" }
+}
+configurations {
+    // for dependencies that are needed for development only
+    developmentOnly 
+}
+dependencies {
+	annotationProcessor platform("io.micronaut:micronaut-bom:$micronautVersion")
+	implementation platform("io.micronaut:micronaut-bom:$micronautVersion")
+	testAnnotationProcessor platform("io.micronaut:micronaut-bom:$micronautVersion")
+	implementation "io.micronaut:micronaut-security-jwt"
+	implementation "io.micronaut.configuration:micronaut-mongo-reactive"
+	testCompile "de.flapdoodle.embed:de.flapdoodle.embed.mongo:2.0.1"
+	implementation "io.micronaut:micronaut-http-client"
+	testCompile "org.junit.jupiter:junit-jupiter-api"
+	testRuntime "org.junit.jupiter:junit-jupiter-engine"
+	testCompile "io.micronaut.test:micronaut-test-junit5"
+	testAnnotationProcessor "io.micronaut:micronaut-inject-java"
+	implementation "javax.annotation:javax.annotation-api"
+	annotationProcessor "io.micronaut:micronaut-inject-java"
+	annotationProcessor "io.micronaut:micronaut-validation"
+	implementation "io.micronaut:micronaut-inject"
+	implementation "io.micronaut:micronaut-validation"
+	implementation "io.micronaut:micronaut-runtime"
+	implementation "io.micronaut:micronaut-discovery-client"
+	implementation "io.micronaut:micronaut-http-server-netty"
+	runtimeOnly "ch.qos.logback:logback-classic:1.2.3"
+	compile group: 'io.projectreactor', name: 'reactor-core', version: '3.2.12.RELEASE'
+	compile group: 'io.projectreactor.netty', name: 'reactor-netty', version: '0.8.11.RELEASE'
+	testCompile group: 'io.projectreactor', name: 'reactor-test', version: '3.2.12.RELEASE'
+
+	compileOnly 'org.projectlombok:lombok:1.18.10'
+	annotationProcessor 'org.projectlombok:lombok:1.18.10'
+}
+test.classpath += configurations.developmentOnly
+mainClassName = "io.hashimati.requestservice.Application"
+// use JUnit 5 platform
+test {
+    useJUnitPlatform()
+}
+tasks.withType(JavaCompile){
+    options.encoding = "UTF-8"
+    options.compilerArgs.add('-parameters')
+}
+shadowJar {
+    mergeServiceFiles()
+}
+run.classpath += configurations.developmentOnly
+run.jvmArgs('-noverify', '-XX:TieredStopAtLevel=1', '-Dcom.sun.management.jmxremote')

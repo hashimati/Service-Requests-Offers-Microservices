@@ -1,0 +1,73 @@
+
+micronaut:
+  application:
+    name: UsersServices
+  server:
+    port: 8888
+---
+
+micronaut:
+  security:
+    enabled: true
+    endpoints:
+      login:
+        enabled: true
+      oauth:
+        enabled: true
+    token:
+      jwt:
+        enabled: true
+        signatures:
+          secret:
+            generator:
+              secret: pleaseChangeThisSecretForANewOne
+      writer:
+        header:
+          enabled: true
+          headerName: "Authorization" 
+          prefix: "Bearer "
+      propagation:
+        enabled: true
+        service-id-regex: "offers-services|requests-services|gateway"
+
+      
+---
+
+# eureka:
+#   client:
+#     enabled: true
+#     registration:
+#       enabled: true
+#     defaultZone: "${EUREKA_HOST:localhost}:${EUREKA_PORT:8761}"
+
+consul:
+  client:
+    registration:
+      enabled: true
+    defaultZone: "${CONSUL_HOST:localhost}:${CONSUL_PORT:8500}"
+---
+jackson:
+  bean-introspection-module: true
+---
+datasources:
+  users:
+    url: jdbc:mysql://127.0.0.1:3306/helloworlddb
+    driverClassName: com.mysql.cj.jdbc.Driver
+    username: root
+    password: 'Hello@1234'
+    dialect: MYSQL
+    
+
+
+---
+liquibase:
+  datasources:
+    users:
+      change-log: 'classpath:db/liquibase-changelog.xml'
+        
+# flyway:
+#   datasources:
+#     default:
+#       locations: classpath:databasemigrations
+#     users:
+#       locations: classpath:databasemigrations
