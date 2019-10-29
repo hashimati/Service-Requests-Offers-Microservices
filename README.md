@@ -3,9 +3,9 @@
 a simple Microservice using Micronaut framework. The archeticture covers the follwing areas:
 1. Service Discovary Netflix Eureka or Consul.
 2. Integration with Zuul Gateway.
-3  Securing Microservices with JWT.
+3. Securing Microservices with JWT.
 4. Micronaut Data with MySQL.
-5- Reactive Mongodb.
+5. Reactive Mongodb.
 
 
 
@@ -28,4 +28,5 @@ The solution consists of 5 services
 5. [Gateway](https://start.spring.io/#!type=gradle-project&language=java&platformVersion=2.2.0.RELEASE&packaging=jar&jvmVersion=1.8&groupId=io.hashimati&artifactId=gateway&name=gateway&description=Demo%20project%20for%20Spring%20Boot&packageName=io.hashimati.gateway&dependencies=cloud-zuul,oauth2-resource-server,cloud-eureka,cloud-starter-consul-discovery,thymeleaf):  a Netfix Zuul gateway service. 
 
 # Archeticture: 
+
 ![Image of Diagram](https://github.com/hashimati/Service-Requests-Offers-Microservices/raw/master/requests_offers_services.png)
