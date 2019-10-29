@@ -1,7 +1,7 @@
 # Service Requests-Offers Microservices
 
 a simple Microservice using Micronaut framework. The archeticture covers the follwing areas:
-1. Service Discovary Netflix Eureka or Consul.
+1. Service Discovary using Netflix Eureka or Consul.
 2. Integration with Zuul Gateway.
 3. Securing Microservices with JWT.
 4. Using Micronaut Data with MySQL.
