@@ -3,9 +3,9 @@
 a simple Microservice using Micronaut framework. The archeticture covers the follwing areas:
 1. Service Discovary Netflix Eureka or Consul.
 2. Integration with Zuul Gateway.
-3. Securing Microservices with JWT.
-4. Micronaut Data with MySQL.
-5. Reactive Mongodb.
+3. Securing Microservices Mesh with JWT.
+4. Using Micronaut Data with MySQL.
+5. Using Reactive Mongodb.
 
 
 
