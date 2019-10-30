@@ -35,8 +35,18 @@ The solution consists of 5 services
 
 
 # Running Application
-
-Start Consul: 
+1. Create new database in the MySQL instance with name "helloworlddb": 
+```sql
+CREATE DATABASE helloworlddb
+```
+2. Start Discovry Server (Consul or Eureka):
+To start Consul, run this command:
 ```
 > consul agent -data-dir=your-consul-data-file -dev -ui
 ```
+To start Eureka, run this command from Eureka directory: 
+```
+> gradlew bootRun
+```
+
+
