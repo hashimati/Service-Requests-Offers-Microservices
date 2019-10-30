@@ -35,17 +35,31 @@ The solution consists of 5 services
 
 
 # Running Application
-1. Create new database in the MySQL instance with name "helloworlddb": 
+1. Ensure MySql and MongoDB instances are installed, configured and run. 
+
+2. Create new database in the MySQL instance with name "helloworlddb": 
 ```sql
 CREATE DATABASE helloworlddb
 ```
-2. Start Discovry Server (Consul or Eureka):
+
+3. Start Discovry Server (Consul or Eureka):
+
 To start Consul, run this command:
-```
+```shell
 > consul agent -data-dir=your-consul-data-file -dev -ui
 ```
 To start Eureka, run this command from Eureka directory: 
+```shell
+> gradlew bootRun
 ```
+
+4. Run UsersService, RequestsService, and OffersService by run this command for each service: 
+```shell
+> gradlew run
+```
+
+5. Run Gateway :
+```shell
 > gradlew bootRun
 ```
 
