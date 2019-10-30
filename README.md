@@ -11,7 +11,7 @@ a simple Microservice using Micronaut framework. The archeticture covers the fol
 
 # Requirements Description (Story)
   
-  John wants to do a full maintenace for his apartement. He heared about an application Called "Request-Offer" app which will help him to find a mentenance with a good offer. John sends a request to "Request-Offer" service. On other hand, Mika is service provider. Mike sees John's offer. Mike sends a good offer to "Request-Offer" service with competitive price to meet John's request. John accepts Mike's offer among alot of other offers.
+  John wants to do a full maintenace for his apartment. He heared about an application Called "Request-Offer" app which will help him to find a maintenance with a good offer. John sends a request to "Request-Offer" service. On other hand, Mike is service provider. Mike sees John's offer. Mike sends a good offer to "Request-Offer" service with competitive price to meet John's request. John accepts Mike's offer among alot of other offers.
 
 # Domains: 
 The services have 3 entities:
