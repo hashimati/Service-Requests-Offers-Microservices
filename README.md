@@ -31,3 +31,12 @@ The solution consists of 5 services
 # Archeticture: 
 
 ![Image of Diagram](https://github.com/hashimati/Service-Requests-Offers-Microservices/raw/master/requests_offers_services.png)
+
+
+
+# Running Application
+
+Start Consul: 
+```
+> consul agent -data-dir=your-consul-data-file -dev -ui
+```
