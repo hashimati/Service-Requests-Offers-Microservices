@@ -2,6 +2,7 @@ package io.hashimati.requestservice.rest;
 
 
 import java.security.Principal;
+import java.util.HashMap;
 
 import javax.inject.Inject;
 
@@ -18,7 +19,6 @@ import io.micronaut.http.annotation.Header;
 import io.micronaut.http.annotation.PathVariable;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.security.annotation.Secured;
-import io.micronaut.security.utils.SecurityService;
 import io.reactivex.Flowable;
 import io.reactivex.Single;
 
@@ -55,9 +55,33 @@ public class RequestController {
 
         return requestServices.findAll(); 
     }
+
+    @Secured({Roles.SERVICE_PROVIDER, Roles.USER})
+    @Get("/requests/getRequestIn{city}")
+    public Flowable<Request> findByCity(@PathVariable("city") String city){
+        return requestServices.findByCity(city); 
+    }
+
+
+    @Secured({Roles.SERVICE_PROVIDER, Roles.USER})
+    @Get("/requests/getRequestNearToMe")
+    public Flowable<Request> findNearBy(@Body HashMap<String,Double> location){
+        if(location.containsKey("longitude") && location.containsKey("latitude"))
+               return requestServices.findNearBy(location);
+              
+         else 
+            return Flowable.just(null); 
+    }
+
     
+    @Secured({Roles.USER})
+    @Get("/requests/")
+    public Flowable<Request> findAll(Principal principal){
+        return requestServices.findAll(principal.getName()); 
 
-
+    }
+    
+ 
     @Secured({Roles.USER})
     @Get("/requests/reject/{requestId}/{offerId}")
     public Single<String> rejectOffer(@PathVariable(value = "requestId") String requestId, @PathVariable(value = "offerId") String offerId, Principal principal, @Header("Authorization") String authentication){
