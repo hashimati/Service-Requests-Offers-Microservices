@@ -64,7 +64,7 @@ public class RequestController {
 
 
     @Secured({Roles.SERVICE_PROVIDER, Roles.USER})
-    @Get("/requests/getRequestNearToMe")
+    @Post("/requests/getRequestNearToMe")
     public Flowable<Request> findNearBy(@Body HashMap<String,Double> location){
         if(location.containsKey("longitude") && location.containsKey("latitude"))
                return requestServices.findNearBy(location);
