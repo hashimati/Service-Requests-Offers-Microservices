@@ -91,7 +91,9 @@ public class RequestServices {
 		return null;
 	}
 	public Flowable<Request> findByCity(String city) {
-        return Flowable.fromPublisher(getCollection().find(new BsonDocument().append("city", new BsonString(city)))); 
+        return Flowable.fromPublisher(getCollection().find(new BsonDocument()
+        .append("status", new BsonString(RequestStatus.INITIATED.toString()))
+        .append("city", new BsonString(city)))); 
     }
 
 
@@ -108,6 +110,7 @@ public class RequestServices {
 
 
             return Flowable.fromPublisher(getCollection().find(new BsonDocument()
+            .append("status", new BsonString(RequestStatus.INITIATED.toString()))
             .append("location", new BsonDocument()
             .append("$near", new BsonDocument()
             .append("$geometry", new BsonDocument()
