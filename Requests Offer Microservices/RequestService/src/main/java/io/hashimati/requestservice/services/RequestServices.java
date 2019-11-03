@@ -2,7 +2,6 @@ package io.hashimati.requestservice.services;
 
 import java.util.HashMap;
 
-import javax.annotation.PostConstruct;
 import javax.inject.Singleton;
 
 import com.mongodb.reactivestreams.client.MongoClient;
@@ -12,11 +11,9 @@ import org.bson.BsonArray;
 import org.bson.BsonDocument;
 import org.bson.BsonDouble;
 import org.bson.BsonString;
-import org.bson.conversions.Bson;
 
 import io.hashimati.requestservice.domains.Request;
 import io.hashimati.requestservice.domains.enums.RequestStatus;
-import io.micronaut.runtime.event.annotation.EventListener;
 import io.reactivex.Flowable;
 import io.reactivex.Single;
 
@@ -33,6 +30,29 @@ public class RequestServices {
     }
 
 
+    private MongoCollection<Request> getCollection() {
+            return mongoClient
+                .getDatabase("requestsDB")
+                .getCollection("requests", Request.class);
+    }
+
+    private Single<Request> findAsSingle(BsonDocument query)
+    {
+
+        return Single.fromPublisher(getCollection().find(query)); 
+    }
+    
+    private Flowable<Request> findAsFlowable(BsonDocument query)
+    {
+
+        return Flowable.fromPublisher(getCollection().find(query)); 
+    }
+
+ 
+
+
+    
+
     public Single<Request> save(Request request){
 
         Long x = Single.fromPublisher(getCollection()
@@ -47,38 +67,34 @@ public class RequestServices {
                 .map(success->request);
 
     }
-
-    private MongoCollection<Request> getCollection() {
-            return mongoClient
-                .getDatabase("requestsDB")
-                .getCollection("requests", Request.class);
-    }
-
- 
-
-
     
     public Single<Request> findRequestByNo(String requestNo) {
         
-        return Single.fromPublisher(getCollection().find(new BsonDocument().append("_id", new BsonString(requestNo)))); 
+        return findAsSingle(new BsonDocument().append("_id", new BsonString(requestNo))); 
         
     }
     
     public Flowable<Request> findAll()
     {
-            return Flowable.fromPublisher(getCollection().find(new BsonDocument().append("status", new BsonString(RequestStatus.INITIATED.toString())))); 
+            BsonDocument query = new BsonDocument().append("status", new BsonString(RequestStatus.INITIATED.toString())); 
+
+            return findAsFlowable(query); 
 
     }
 
     public Flowable<Request> findAll(String username){
-        return Flowable.fromPublisher(getCollection().find(new BsonDocument().append("requesterName", new BsonString(username)))); 
+        return findAsFlowable(new BsonDocument()
+                                .append("requesterName", new BsonString(username))); 
     }
 
 	public Single<String> takeAction(String requestId, RequestStatus done){
         BsonDocument filter = new BsonDocument().append("_id", new BsonString(requestId)); 
 
-        Request request = Single.fromPublisher(getCollection().find(filter).limit(1).first()).blockingGet(); 
+        Request request = findAsSingle(filter).blockingGet(); 
+        //Single.fromPublisher(getCollection().find(filter).limit(1).first()).blockingGet(); 
         request.setStatus(done);
+
+
 
         return Single.fromPublisher(getCollection().findOneAndReplace(filter, request))
         .map(success->"success")
@@ -87,43 +103,39 @@ public class RequestServices {
 
 
 	}
-	public Flowable<Request> findOpenRequests() {
-		return null;
-	}
+	
 	public Flowable<Request> findByCity(String city) {
-        return Flowable.fromPublisher(getCollection().find(new BsonDocument()
+        BsonDocument query = new BsonDocument()
         .append("status", new BsonString(RequestStatus.INITIATED.toString()))
-        .append("city", new BsonString(city)))); 
+        .append("city", new BsonString(city)); 
+
+        return findAsFlowable(query); 
     }
 
 
 	public Flowable<Request> findNearBy(HashMap<String, Double> location) {
 
-        // get Locations; 
-
-        BsonArray coordinates = new BsonArray(); 
+         
         try{
-            
+            // get Locations; 
+            BsonArray coordinates = new BsonArray();    
             coordinates.add(new BsonDouble(location.get("longitude"))); 
             coordinates.add(new BsonDouble(location.get("latitude")));
-            
 
-
-            return Flowable.fromPublisher(getCollection().find(new BsonDocument()
+            BsonDocument query = new BsonDocument()
             .append("status", new BsonString(RequestStatus.INITIATED.toString()))
             .append("location", new BsonDocument()
             .append("$near", new BsonDocument()
             .append("$geometry", new BsonDocument()
             .append("type", new BsonString("Point")) .append("coordinates", coordinates))
             .append("$minDistance", new BsonDouble(0))
-            .append("$maxDistance", new BsonDouble(100)))))) ;
+            .append("$maxDistance", new BsonDouble(100)))); 
+
+            return findAsFlowable(query) ;
         }
         catch(Exception ex)
         {
             return Flowable.just(null); 
         }
-    }
-
-
-	
+    }	
 }

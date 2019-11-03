@@ -35,7 +35,26 @@ public class OfferServices {
         this.mongoClient = mongoClient;
     }
 
+    private MongoCollection<Offer> getCollection() {
 
+    
+            return mongoClient
+                .getDatabase("requestsDB")
+                .getCollection("offers", Offer.class);
+    }
+    private Single<Offer> findAsSingle(BsonDocument query)
+    {
+        return Single
+        .fromPublisher(getCollection()
+        .find(query)); 
+    }
+
+    private Flowable<Offer> findAsFlowable(BsonDocument query)
+    {
+        return Flowable
+        .fromPublisher(getCollection()
+        .find(query)); 
+    }
     public Single<Offer> save(Offer offer, String token){
         
 
@@ -66,17 +85,9 @@ public class OfferServices {
     }
     public Flowable<Offer> findOffersByRequestNo(String requestNo)
     {
-        return Flowable
-        .fromPublisher(getCollection()
-        .find(new BsonDocument().append("orderNumber", new BsonString(requestNo)))); 
-        
-    }
-    private MongoCollection<Offer> getCollection() {
+        return findAsFlowable(new BsonDocument().append("orderNumber", new BsonString(requestNo))); 
 
-    
-            return mongoClient
-                .getDatabase("requestsDB")
-                .getCollection("offers", Offer.class);
+        
     }
 
 
@@ -86,9 +97,7 @@ public class OfferServices {
         .append("orderNumber", new BsonString(requestId))
         .append("requesterName",new BsonString(username)); 
         
-        Offer offer = Single.fromPublisher(getCollection().find(
-            filter
-        )).blockingGet();
+        Offer offer = findAsSingle(filter).blockingGet();
         
         offer.setStatus(offerStatus); 
         
