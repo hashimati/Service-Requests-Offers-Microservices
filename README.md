@@ -35,7 +35,16 @@ The solution consists of 5 services
 # Step 1: Service Discovery Server 
 
 # Step 2: Users Service 
-Users Service is user management services. The service will provide basiclly registration, authentication and authorization functions. The service will handle user object and store them in MySQL instance. User POJO has three attributes of string data type which are username, password, and roles. The roles are represented as string delimated by commas. The service will use Micronaut Data API to handle CRUD operations. So, let's define the User POJO: 
+Users Service is a user management and JWT propagation service. The service will provide basiclly user registration, authentication and authorization functions. The service will handle user objects and store them into MySQL instance. User POJO has three attributes of string data type which are username, password, and roles. The roles are represented as a string delimated by commas. The service will use Micronaut Data API to handle CRUD operations. As prerequisite, add Micronaut Data dependcies for JDBC and MySQL dependencies
+```gradle
+annotationProcessor 'io.micronaut.data:micronaut-data-processor:1.0.0.M4'
+runtime 'io.micronaut.configuration:micronaut-jdbc-hikari'
+compile 'io.micronaut.data:micronaut-data-jdbc:1.0.0.M4'
+compile group: 'mysql', name: 'mysql-connector-java', version: '8.0.17'
+compileOnly 'jakarta.persistence:jakarta.persistence-api:2.2.2'
+runtime "io.micronaut.configuration:micronaut-jdbc-tomcat"
+```
+Now, let's define the User POJO: 
 ```
 /src/java/main/io/hashimati/usersservices/domains
 ```
@@ -54,7 +63,7 @@ public class User
     private String roles;
 }
 ```
-The User Pojo is mapped to a table in the database. The is defined by the below statement. 
+The User Pojo is mapped to a table in the database. The table is defined by the below statement. 
 ```sql
 create table users (
     id BIGINT not NULL auto_increment,
@@ -122,15 +131,171 @@ liquibase:
       change-log: 'classpath:db/liquibase-changelog.xml'
 ```
 
-Now, lets create User repository. As prerequisite, add Micronaut Data dependcies for JDBC and MySQL dependencies
-```gradle
-	annotationProcessor 'io.micronaut.data:micronaut-data-processor:1.0.0.M4'
-	runtime 'io.micronaut.configuration:micronaut-jdbc-hikari'
-	compile 'io.micronaut.data:micronaut-data-jdbc:1.0.0.M4'
-	compile group: 'mysql', name: 'mysql-connector-java', version: '8.0.17'
-	compileOnly 'jakarta.persistence:jakarta.persistence-api:2.2.2'
-	runtime "io.micronaut.configuration:micronaut-jdbc-tomcat"
+As mentioned in the requirement, the user could be Service requester as "user" or Service provider as "service_provider". So, we will represet these two roles as constants under Roles.java class. 
 ```
+src\main\java\io\hashimati\usersservices\constants\Roles.java
+```
+```java
+public class Roles {
+    public static String SERVICE_PROVIDER = "service_provider"; 
+    public static String USER = "user"; 
+    
+}
+```
+To handle User CRUD will define UserRepository interface. The UserRepsoitory should extend CrudRepository interface and annotated with @JdbcRepository annotation. Because the service is connected to MySQL instance, will pass Dialect.MYSQL into dilect attribute of the @JdbcRepository   
+```
+src\main\java\io\hashimati\usersservices\repository\UserRepository.java
+```
+```java
+import io.hashimati.usersservices.domains.User; 
+import io.micronaut.data.jdbc.annotation.JdbcRepository;
+import io.micronaut.data.model.query.builder.sql.Dialect;
+import io.micronaut.data.repository.CrudRepository;
+
+@JdbcRepository(dialect = Dialect.MYSQL)
+public interface UserRepository extends CrudRepository<User, Long>
+{
+    public User findUserByUsername(String username);
+    public boolean existsByUsername(String username); 
+}
+```
+In UserRepository, we defined two funcitons: findUserByUsername(String username) to retreive a particular user object by username and existsByUsername(String username) function which returns true if the user exist in the database or false if the user is not exist in the database. 
+
+Now, we are ready to work with security configuration. Micronaut has simplified the implementation of JWT authentication and authorization. To implement security we need to create your AuthenticationProvider class and configure JWT properties in application.yml file. Before these two steps, we need to encrypt the user's password before storing it into the database. To acheive this goal, we will use BCryptPasswordEncoder of spring-security-crypto API to encrypt and match passwords. 
+```build
+// https://mvnrepository.com/artifact/org.springframework.security/spring-security-crypto
+compile group: 'org.springframework.security', name: 'spring-security-crypto', version: '5.2.0.RELEASE'
+```
+In BCPasswordEncoder class, we will define the BCryptPasswordEncoder bean. @Factory and @Proto annotations are equivelant to @Configuraiton and @Bean annotations in Spring Boot. 
+```
+src\main\java\io\hashimati\usersservices\security\BCPasswordEncoder.java
+```
+```java
+@Factory
+public class BCPasswordEncoder{    
+    @Prototype
+    public PasswordEncoder passwordEncoder(){
+
+        return new BCryptPasswordEncoder();
+    }
+}
+```
+Now, we declare the Authentication Provider class. The authentication provider class implements AuthenticationProvider interface. The implemenation requires overriding authenticate() method in which the users' credentials are validated. 
+
+```java
+@Singleton
+public class AuthenticationProviderUserPassword implements AuthenticationProvider  {
+
+    @Inject
+    private UserRepository userRepository;
+
+    @Inject 
+    private PasswordEncoder PasswordEncoder; 
+
+
+    @Override
+    public Publisher<AuthenticationResponse> authenticate(AuthenticationRequest authenticationRequest) {
+
+        //if User is not exist, return Authentication Failed
+        if(!userRepository.existsByUsername(authenticationRequest.getIdentity().toString())){
+            
+            return Flowable.just(new AuthenticationFailed(AuthenticationFailureReason.USER_NOT_FOUND)); 
+        }
+
+        User user = userRepository.findUserByUsername(authenticationRequest.getIdentity().toString());  
+        
+    
+        if ( PasswordEncoder.matches(authenticationRequest.getSecret().toString(), user.getPassword())) {
+            return Flowable.just(new UserDetails(user.getUsername(),
+                    Arrays.asList(user.getRoles()
+                            .replace(" ", "")
+                            .split(","))));
+        }
+        
+        return Flowable.just(new AuthenticationFailed(AuthenticationFailureReason.CREDENTIALS_DO_NOT_MATCH)); 
+    }
+}
+```
+Then, we will exponse the users registration via /signup/{role} POST Endpoint.{role} is a path variable which holds either "user" or "service_provider". Therefore, the user's role will determented based on {role} value. The SignUp() method is annotated with  @Secured(SecurityRule.IS_ANONYMOUS) which mean it does not require users to be authenticated to consume it. The login and oauth endpoints are built-in in Micronaut-JWT which means that you can configure them in the applicaiton.yml file.
+
+```java
+ @Controller("/")
+public class UserController {
+
+    @Inject
+    UserRepository userRepository; 
+    
+    @Inject
+    private PasswordEncoder passwordEncoder; 
+
+    @Secured(SecurityRule.IS_ANONYMOUS)
+    @Post("/signup/{role}")
+    public Single<String> signUp(@Body User user, @PathVariable(value = "role") String role) 
+    {
+        if(role.equals(Roles.USER) || role.equals(Roles.SERVICE_PROVIDER))  
+        {
+            user.setRoles(role);
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            try{
+                if(!userRepository.existsByUsername(user.getUsername()))
+                 {
+                     userRepository.save(user); 
+                     return Single.just("done!");
+                 } 
+                 else 
+                 {
+                     return Single.just("The user is already exist"); 
+                 }
+            }
+            catch(Exception ex)
+            {
+                ex.printStackTrace();; 
+                return Single.just("Something is going wrong! Please contact The administrators!"); 
+            }
+        }
+        return Single.just("Invalid Request"); 
+    }
+}
+```
+Finally, we will configure security and JWT configuration in application.yml. 
+```
+src\main\resources\application.yml
+```
+```yml
+micronaut:
+  security:
+    enabled: true  #1
+    endpoints:
+      login:
+        enabled: true #2
+      oauth:
+        enabled: true #3
+    token:
+      jwt:
+        enabled: true  #4
+        signatures:
+          secret:
+            generator:
+              secret: pleaseChangeThisSecretForANewOne #5
+      writer:
+        header:
+          enabled: true	#6
+          headerName: "Authorization"  #7
+          prefix: "Bearer " #8
+      propagation:
+        enabled: true #9
+        service-id-regex: "offers-services|requests-services|gateway" #10
+```
+1) Enabling The security
+2) To enable login endpoint
+3) To enable oauth endpoint
+4) to enable JWT token
+5) to provide the secret in the configuration which will be used to generate the token. 
+6) To enable header. 
+7) To specify the header name. 
+8) To specify the prefix of the authentication. 
+9) To enable propagation 
+10) To provide the services ids to which the UsersService will propagate the JWT secret. 
 
 # Step 3: Requests Service 
 
