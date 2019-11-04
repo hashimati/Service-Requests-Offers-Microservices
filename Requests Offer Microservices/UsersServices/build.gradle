@@ -38,9 +38,9 @@ dependencies {
 	runtimeOnly "ch.qos.logback:logback-classic:1.2.3"
 
 
-	annotationProcessor 'io.micronaut.data:micronaut-data-processor:1.0.0.M3'
+	annotationProcessor 'io.micronaut.data:micronaut-data-processor:1.0.0.M4'
 	runtime 'io.micronaut.configuration:micronaut-jdbc-hikari'
-	compile 'io.micronaut.data:micronaut-data-jdbc:1.0.0.M1'
+	compile 'io.micronaut.data:micronaut-data-jdbc:1.0.0.M4'
 	compile group: 'mysql', name: 'mysql-connector-java', version: '8.0.17'
 	compileOnly 'jakarta.persistence:jakarta.persistence-api:2.2.2'
 	runtime "io.micronaut.configuration:micronaut-jdbc-tomcat"
@@ -50,9 +50,11 @@ dependencies {
 
 	// https://mvnrepository.com/artifact/org.springframework.security/spring-security-crypto
 	compile group: 'org.springframework.security', name: 'spring-security-crypto', version: '5.2.0.RELEASE'
+	
 	// https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
 	compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.10.0'
-		compileOnly "com.fasterxml.jackson.core:jackson-annotations:2.10.0"
+	
+	compileOnly "com.fasterxml.jackson.core:jackson-annotations:2.10.0"
 	compileOnly 'org.projectlombok:lombok:1.18.10'
 	annotationProcessor 'org.projectlombok:lombok:1.18.10'
 	
