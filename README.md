@@ -35,6 +35,39 @@ The solution consists of 5 services
 # Step 1: Service Discovery Server 
 
 # Step 2: Users Service 
+Users Service is user management services. The service will provide basiclly registration, authentication and authorization functions. The service will handle user object and store them in MySQL instance. User POJO has three attributes of string data type which are username, password, and roles. The service will use Micronaut Data API to handle CRUD operations. So, let's define the User POJO: 
+```java
+@Entity(name = "users")
+@Table(name="users")
+public class User
+{
+
+    @Id
+    @GeneratedValue
+    private Long id;
+
+    @NotNull
+    @Column(name = "username", unique = true, nullable = false, length = 26, updatable = false)
+    private String username;
+
+
+    @NotNull
+    @Column(name = "password", nullable = false)
+    private String password;
+
+
+
+
+    private String roles ;
+    
+}
+```
+```sql
+```
+```xml
+```
+```xml
+```
 
 # Step 3: Requests Service 
 
