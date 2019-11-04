@@ -32,9 +32,9 @@ The solution consists of 5 services
 
 ![Image of Diagram](https://github.com/hashimati/Service-Requests-Offers-Microservices/raw/master/requests_offers_services.png)
 
-# Step 1: Service Discovery Server 
+### Step 1: Service Discovery Server 
 
-# Step 2: Users Service 
+### Step 2: Users Service 
 Users Service is a user management and JWT propagation service. The service will provide basiclly user registration, authentication and authorization functions. The service will handle user objects and store them into MySQL instance. User POJO has three attributes of string data type which are username, password, and roles. The roles are represented as a string delimated by commas. The service will use Micronaut Data API to handle CRUD operations. As prerequisite, add Micronaut Data dependcies for JDBC and MySQL dependencies
 ```gradle
 annotationProcessor 'io.micronaut.data:micronaut-data-processor:1.0.0.M4'
@@ -63,7 +63,7 @@ public class User
     private String roles;
 }
 ```
-The User Pojo is mapped to a table in the database. The table is defined by the below statement. 
+The User Pojo is mapped to a table in the database by using below statement. 
 ```sql
 create table users (
     id BIGINT not NULL auto_increment,
@@ -74,7 +74,7 @@ create table users (
     constraint id_num unique (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 ```
-We will use Liquibase to create the Users table once the UsersService is launched. This process is called database migration. The migration process could include table creation and data migration. Liquibase uses XML files to manipulate database migration. In this example, we will do only table creation in three steps. The first step is to define create users schema in XML file: 
+The CREATE TABLE can be run manually in the database or we can use frameworks like Flyway or Liquibase. In thie application, we will use Liquibase to create the Users table once the UsersService is run. Liquibase will look into the definitions file and it will execute the defined DDL and SQL statements before exposing the services. Liquibase uses XML files to manipulate database migration. This process is called database migration. The migration process could include schema creation and data migration. In this example, we will do only table creation in three steps. The first step is to define create users schema in XML file. The file name should be in the following format virsion-filename.xml: 
 ```
 src\main\resources\db\changelog\01-create-users-schema.xml
 ```
@@ -297,10 +297,10 @@ micronaut:
 9) To enable propagation 
 10) To provide the services ids to which the UsersService will propagate the JWT secret. 
 
-# Step 3: Requests Service 
+### Step 3: Requests Service 
 
-# Step 4: Offers Service
-# Step 5 Gateway
+### Step 4: Offers Service
+### Step 5 Gateway
 
 # Running Application
 1. Ensure MySql and MongoDB instances are installed, configured and run. 
