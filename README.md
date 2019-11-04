@@ -257,7 +257,7 @@ public class UserController {
     }
 }
 ```
-Finally, we will configure security and JWT configuration in application.yml. 
+Finally, we will configure security and JWT properties in application.yml. 
 ```
 src\main\resources\application.yml
 ```
