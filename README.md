@@ -35,9 +35,12 @@ The solution consists of 5 services
 # Step 1: Service Discovery Server 
 
 # Step 2: Users Service 
-Users Service is user management services. The service will provide basiclly registration, authentication and authorization functions. The service will handle user object and store them in MySQL instance. User POJO has three attributes of string data type which are username, password, and roles. The service will use Micronaut Data API to handle CRUD operations. So, let's define the User POJO: 
+Users Service is user management services. The service will provide basiclly registration, authentication and authorization functions. The service will handle user object and store them in MySQL instance. User POJO has three attributes of string data type which are username, password, and roles. The roles are represented as string delimated by commas. The service will use Micronaut Data API to handle CRUD operations. So, let's define the User POJO: 
+```
+/src/java/main/io/hashimati/usersservices/domains
+```
 ```java
-@Entity(name = "users")
+@Entity
 @Table(name="users")
 public class User
 {
@@ -45,28 +48,78 @@ public class User
     @Id
     @GeneratedValue
     private Long id;
-
-    @NotNull
-    @Column(name = "username", unique = true, nullable = false, length = 26, updatable = false)
-    private String username;
-
-
-    @NotNull
-    @Column(name = "password", nullable = false)
-    private String password;
-
-
-
-
-    private String roles ;
     
+    private String username;
+    private String password;
+    private String roles;
 }
 ```
+The User Pojo is mapped to a table in the database. The is defined by the below statement. 
 ```sql
+create table users (
+    id BIGINT not NULL auto_increment,
+    username varchar(25) not null,
+    password varchar(15) not null,
+    roles varchar(200) not null, 
+    constraint username unique (username),
+    constraint id_num unique (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+```
+We will use Liquibase to create the Users table once the UsersService is launched. This process is called database migration. The migration process could include table creation and data migration. Liquibase uses XML files to manipulate database migration. In this example, we will do only table creation. The first step is to define create users schema in XML file: 
+```
+src\main\resources\db\changelog\01-create-users-schema.xml
 ```
 ```xml
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+  <changeSet id="01" author="hashimati">
+    <createTable tableName="users"
+      remarks="A table to contain all users">
+      <column name="id" type="int" autoIncrement="true">
+        <constraints nullable="false" unique="true" primaryKey="true" />
+      </column>
+      <column name="username" type="varchar(25)">
+        <constraints nullable="false" unique="true"/>
+      </column>
+      <column name="password" type="varchar(200)">
+        <constraints nullable="false" unique="false"/>
+      </column>
+      
+      <column name="roles" type="varchar(200)">
+        <constraints nullable="false" unique="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+</databaseChangeLog>
+```
+The second step, we will include Users schema creation in the liquibase changelog xml file. 
+```
+src\main\resources\db\liquibase-changelog.xml
 ```
 ```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+  <include file="changelog/01-create-users-schema.xml" relativeToChangelogFile="true"/>
+</databaseChangeLog>
+```
+The thrid step is the configuration of the change log file in application.yml file. 
+```
+src\main\resources\application.yml
+```
+```yml
+liquibase:
+  datasources:
+    users:
+      change-log: 'classpath:db/liquibase-changelog.xml'
 ```
 
 # Step 3: Requests Service 
