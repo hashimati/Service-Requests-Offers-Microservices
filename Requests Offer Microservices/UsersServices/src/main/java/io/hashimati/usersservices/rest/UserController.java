@@ -28,11 +28,9 @@ public class UserController {
 
     @Inject
     UserRepository userRepository; 
-
     
     @Inject
     private PasswordEncoder passwordEncoder; 
-
 
     @Secured(SecurityRule.IS_ANONYMOUS)
     @Post("/signup/{role}")
@@ -60,8 +58,6 @@ public class UserController {
             }
         }
         return Single.just("Invalid Request"); 
-
-        
     }
     
 

@@ -21,7 +21,7 @@ import javax.validation.constraints.NotNull;
 // @AllArgsConstructor
 // @EqualsAndHashCode
 // @ToString
-@Entity(name = "users")
+@Entity
 @Table(name="users")
 public class User
 {
@@ -29,7 +29,6 @@ public class User
     @Id
     @GeneratedValue
     private Long id;
-
 
     @NotNull
     @Column(name = "username", unique = true, nullable = false, length = 26, updatable = false)

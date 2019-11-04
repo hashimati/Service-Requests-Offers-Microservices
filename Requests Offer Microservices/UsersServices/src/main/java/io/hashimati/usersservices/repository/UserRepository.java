@@ -15,10 +15,6 @@ import io.micronaut.data.repository.CrudRepository;
 @JdbcRepository(dialect = Dialect.MYSQL)
 public interface UserRepository extends CrudRepository<User, Long>
 {
-
-
     public User findUserByUsername(String username);
-    public User findUserByUsernameAndPassword(String username, String password);
     public boolean existsByUsername(String username); 
-    
 }
