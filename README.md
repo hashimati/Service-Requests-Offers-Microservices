@@ -65,7 +65,7 @@ create table users (
     constraint id_num unique (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 ```
-We will use Liquibase to create the Users table once the UsersService is launched. This process is called database migration. The migration process could include table creation and data migration. Liquibase uses XML files to manipulate database migration. In this example, we will do only table creation. The first step is to define create users schema in XML file: 
+We will use Liquibase to create the Users table once the UsersService is launched. This process is called database migration. The migration process could include table creation and data migration. Liquibase uses XML files to manipulate database migration. In this example, we will do only table creation in three steps. The first step is to define create users schema in XML file: 
 ```
 src\main\resources\db\changelog\01-create-users-schema.xml
 ```
@@ -120,6 +120,16 @@ liquibase:
   datasources:
     users:
       change-log: 'classpath:db/liquibase-changelog.xml'
+```
+
+Now, lets create User repository. As prerequisite, add Micronaut Data dependcies for JDBC and MySQL dependencies
+```gradle
+	annotationProcessor 'io.micronaut.data:micronaut-data-processor:1.0.0.M4'
+	runtime 'io.micronaut.configuration:micronaut-jdbc-hikari'
+	compile 'io.micronaut.data:micronaut-data-jdbc:1.0.0.M4'
+	compile group: 'mysql', name: 'mysql-connector-java', version: '8.0.17'
+	compileOnly 'jakarta.persistence:jakarta.persistence-api:2.2.2'
+	runtime "io.micronaut.configuration:micronaut-jdbc-tomcat"
 ```
 
 # Step 3: Requests Service 
