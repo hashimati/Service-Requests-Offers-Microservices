@@ -1,6 +1,10 @@
-# Service Requests-Offers Microservices
+#Service Requests-Offers Microservices
 
-a simple Microservice using Micronaut framework. The archeticture covers the follwing areas:
+What Is Micronaut?
+In a nutshell, Micronaut is a lightweight, JVM-based framework that's ahead of compilation time, with less startup time.
+
+
+Service Requess-Offers Microservices is a simple microservices application using Micronaut framework. The application covers the following areas:
 1. Service Discovary using Netflix Eureka or Consul.
 2. Integration with Zuul Gateway.
 3. Securing Microservices with JWT.
