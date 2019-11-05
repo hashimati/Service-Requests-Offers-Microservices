@@ -290,7 +290,7 @@ micronaut:
 2) To enable login endpoint
 3) To enable oauth endpoint
 4) to enable JWT token
-5) to provide the secret in the configuration which will be used to generate the token. 
+5) to provide the secret in the configuration which the sevice uses to generate the token. 
 6) To enable header. 
 7) To specify the header name. 
 8) To specify the prefix of the authentication. 
