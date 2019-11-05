@@ -32,8 +32,9 @@ The solution consists of 5 services
 
 ![Image of Diagram](https://github.com/hashimati/Service-Requests-Offers-Microservices/raw/master/requests_offers_services.png)
 
+# Implementation
 ### Step 1: Service Discovery Server 
-
+to be written
 ### Step 2: Users Service 
 Users Service is a user management and JWT propagation service. The service will provide basiclly user registration, authentication and authorization functions. The service will handle user objects and store them into MySQL instance. User POJO has three attributes of string data type which are username, password, and roles. The roles are represented as a string delimated by commas. The service will use Micronaut Data API to handle CRUD operations. As prerequisite, add Micronaut Data dependcies for JDBC and MySQL dependencies
 ```gradle
@@ -298,10 +299,11 @@ micronaut:
 10) To provide the services ids to which the UsersService will propagate the JWT secret. 
 
 ### Step 3: Requests Service 
-
+to be written
 ### Step 4: Offers Service
+to be written
 ### Step 5 Gateway
-
+to be written
 # Running Application
 1. Ensure MySql and MongoDB instances are installed, configured and run. 
 
@@ -331,4 +333,4 @@ To start Eureka, run this command from Eureka directory:
 > gradlew bootRun
 ```
 
-
+# Conclusion
