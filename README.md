@@ -166,7 +166,7 @@ Now, we are ready to work with security configuration. Micronaut has simplified 
 // https://mvnrepository.com/artifact/org.springframework.security/spring-security-crypto
 compile group: 'org.springframework.security', name: 'spring-security-crypto', version: '5.2.0.RELEASE'
 ```
-In BCPasswordEncoder class, we will define the BCryptPasswordEncoder bean. @Factory and @Proto annotations are equivelant to @Configuraiton and @Bean annotations in Spring Boot. 
+In BCPasswordEncoder class, we will define the BCryptPasswordEncoder bean. @Factory and @Prototype annotations are equivelant to @Configuraiton and @Bean annotations in Spring Boot. 
 ```
 src\main\java\io\hashimati\usersservices\security\BCPasswordEncoder.java
 ```
@@ -180,7 +180,7 @@ public class BCPasswordEncoder{
     }
 }
 ```
-Now, we declare the Authentication Provider class. The authentication provider class implements AuthenticationProvider interface. The implemenation requires overriding authenticate() method in which the users' credentials are validated. 
+Now, we can write the Authentication Provider class. The authentication provider class implements AuthenticationProvider interface. The implemenation requires overriding authenticate() method in which the users' credentials are validated. 
 
 ```java
 @Singleton
