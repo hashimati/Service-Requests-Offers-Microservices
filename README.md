@@ -68,13 +68,13 @@ The User Pojo is mapped to a table in the database by using below statement.
 create table users (
     id BIGINT not NULL auto_increment,
     username varchar(25) not null,
-    password varchar(15) not null,
+    password varchar(200) not null,
     roles varchar(200) not null, 
     constraint username unique (username),
     constraint id_num unique (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 ```
-The CREATE TABLE can be run manually in the database or we can use frameworks like Flyway or Liquibase. In thie application, we will use Liquibase to create the Users table once the UsersService is run. Liquibase will look into the definitions file and it will execute the defined DDL and SQL statements before exposing the services. Liquibase uses XML files to manipulate database migration. This process is called database migration. The migration process could include schema creation and data migration. In this example, we will do only table creation in three steps. The first step is to define create users schema in XML file. The file name should be in the following format virsion-filename.xml: 
+The CREATE TABLE statement can be run manually in the database or we can use frameworks like Flyway or Liquibase to execute it when we launch the service. This process is called database migration. The migration process could include schema creation and data migration. One advantage of using Liquibase or Flyway frameworks is to keep tracks of our schemas versions and to log the changes in well organized and structured table that data migration fromeworks provide. In this application, we will use Liquibase to create the Users table once the UsersService is run. Liquibase will look into the definitions files and it will execute the defined DDL and SQL statements before exposing the services. Liquibase uses XML files to manipulate database migration. In this application, we will do only table creation in three steps. The first step is to define create users schema in XML file. The file name should be in the following format virsion-filename.xml. So, the file name should be 01-create-users-schema.xml where "01" prefix indicates to the version of Users Table. Whenever you update the schema save the changes in a new file and increment the version prefix.   
 ```
 src\main\resources\db\changelog\01-create-users-schema.xml
 ```
@@ -142,7 +142,7 @@ public class Roles {
     
 }
 ```
-To handle User CRUD will define UserRepository interface. The UserRepsoitory should extend CrudRepository interface and annotated with @JdbcRepository annotation. Because the service is connected to MySQL instance, will pass Dialect.MYSQL into dilect attribute of the @JdbcRepository   
+To handle User CRUD, we will define UserRepository interface. The UserRepsoitory should extend CrudRepository interface and annotated with @JdbcRepository annotation. Because the service is connected to MySQL instance, we will pass Dialect.MYSQL into dilect attribute of the @JdbcRepository   
 ```
 src\main\java\io\hashimati\usersservices\repository\UserRepository.java
 ```
