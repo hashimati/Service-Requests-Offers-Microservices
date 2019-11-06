@@ -38,7 +38,44 @@ The solution consists of 5 services
 
 ## Implementation
 ### Step 1: Service Discovery Server 
-to be written
+Service Discovery Server is a namiong service for the services. Each service will register itself in the service discovery services. Therefore, the services will contact with each others by their name. Also, provide a services to inquiry about the availability of each services instances. In our application you can use Eureka or Consul as a service discovery server. 
+
+#### Netflix Eureka Service Discovery Server. 
+Eureka Service Discovery server is spring boot application which is usually listening on port 8761. To configure it, open application.properties file  and add the below configurations.  
+```
+src\main\resources\application.properties
+```
+```properties
+server.port=8761
+eureka.client.register-with-eureka=false
+eureka.client.fetch-registry=false
+```
+Then, annotate the main class with @EnableEurekaServer annotation. By these two steps, you did the basic configuration for Eureka Servcie Discovery Server. 
+```
+src\main\java\io\hashimati\EurekaService\EurekaServiceApplication.java
+```
+```java
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
+
+@EnableEurekaServer
+@SpringBootApplication
+public class EurekaServiceApplication {
+	public static void main(String[] args) {
+
+	    SpringApplication.run(EurekaServiceApplication.class, args);
+	}
+}
+```
+
+#### Using Consul
+
+Consul is a service discovery solution which is maintained by HashiCorp. You can use as a blackbox solution for discovery service. download the community edition. The create extract the executable file into your selected path. After that create a folder for servcie data in your file system in order to pass into running command. Consul service is listening by default on port 8500. To run Consul agent, use the below command: 
+```shell
+> consul agent -data-dir=your-consul-data-file -dev -ui
+```
+
 ### Step 2: Users Service 
 Users Service is a user management and JWT propagation service. The service will provide basiclly user registration, authentication and authorization functions. The service will handle user objects and store them into MySQL instance. User POJO has three attributes of string data type which are username, password, and roles. The roles are represented as a string delimated by commas. The service will use Micronaut Data API to handle CRUD operations. As prerequisite, add Micronaut Data dependcies for JDBC and MySQL dependencies
 ```gradle
@@ -136,7 +173,7 @@ liquibase:
       change-log: 'classpath:db/liquibase-changelog.xml'
 ```
 
-As mentioned in the requirement, the user could be Service requester as "user" or Service provider as "service_provider". So, we will represet these two roles as constants under Roles.java class. 
+As mentioned in the requirement, the user could be Service requester as "user" or Service provider as "service_provider". So, we will declare these two roles as two constant attributes of type string under Roles.java class. 
 ```
 src\main\java\io\hashimati\usersservices\constants\Roles.java
 ```
