@@ -13,11 +13,11 @@ Service Requess-Offers Microservices is a simple microservices application using
 
 
 
-# Requirements Description (Story)
+## Requirements Description (Story)
   
   John wants to do a full maintenace for his apartment. He heared about an application Called "Request-Offer" app which will help him to find a maintenance with a good offer. John sends a request to "Request-Offer" service. On other hand, Mike is service provider. Mike sees John's offer. Mike sends a good offer to "Request-Offer" service with competitive price to meet John's request. John accepts Mike's offer among alot of other offers.
 
-# Domains: 
+## Domains: 
 The services have 3 entities:
 
 1. User: This entity represents the application users  user should be either requester and provider.
@@ -32,11 +32,11 @@ The solution consists of 5 services
 4. [OffersService](https://www.microstarter.io/?g=io.hashimati&artifact=OffersService&build=Gradle&language=Java&profile=service&port=-1&javaVersion=8&d=discovery-eureka,security-jwt,mongo-reactive): This service produces all services which are related to offers. Offers objects will be stored in a MongoDB instance. OffersService invokes services from RequestsServices as required. 
 5. [Gateway](https://start.spring.io/#!type=gradle-project&language=java&platformVersion=2.2.0.RELEASE&packaging=jar&jvmVersion=1.8&groupId=io.hashimati&artifactId=gateway&name=gateway&description=Demo%20project%20for%20Spring%20Boot&packageName=io.hashimati.gateway&dependencies=cloud-zuul,oauth2-resource-server,cloud-eureka,cloud-starter-consul-discovery,thymeleaf):  a Netfix Zuul gateway service. 
 
-# Archeticture: 
+## Archeticture: 
 
 ![Image of Diagram](https://github.com/hashimati/Service-Requests-Offers-Microservices/raw/master/requests_offers_services.png)
 
-# Implementation
+## Implementation
 ### Step 1: Service Discovery Server 
 to be written
 ### Step 2: Users Service 
@@ -308,7 +308,7 @@ to be written
 to be written
 ### Step 5 Gateway
 to be written
-# Running Application
+## Running Application
 1. Ensure MySql and MongoDB instances are installed, configured and run. 
 
 2. Create new database in the MySQL instance with name "helloworlddb": 
@@ -337,4 +337,4 @@ To start Eureka, run this command from Eureka directory:
 > gradlew bootRun
 ```
 
-# Conclusion
+## Conclusion
