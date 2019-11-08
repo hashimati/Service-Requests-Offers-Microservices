@@ -96,7 +96,7 @@ compileOnly 'jakarta.persistence:jakarta.persistence-api:2.2.2'
 runtime "io.micronaut.configuration:micronaut-jdbc-tomcat"
 ```
 
-After adding the Micronaut Data dependencies, configure the database connection in application.yml file. The configurations are 
+After adding the Micronaut Data dependencies, configure the database connection in application.yml file. The required configurations are 
 
 | url | driverClassName | username | password | dialect |
 | --- | --- | --- | --- | --- |
@@ -487,7 +487,12 @@ public enum OfferStatus {
     ACCEPTED, REJECTED, SENT;
 }
 ```
-Based on Request class, we will implement two classes.The fiest one is RequestService to handle the requests object. The second class is RequestController which exposes the REST servies that are related to Requests objects. Before starting the implemenation of the RequestsServices class, we need to configure MongoDB instance's URI in application.yml file. The MongoDB instance is lestining on port 27017. 
+Based on Request class, we will implement two classes.The fiest one is RequestService to handle the requests object. The second class is RequestController which exposes the REST servies that are related to Requests objects. Before starting the implemenation of the RequestsServices class, we need to configure MongoDB instance's URI in application.yml file. The MongoDB instance is lestining on port 27017. These are the database information
+
+| host | Port | Database Name | Request Collection | Offer Collection |
+| --- | --- | --- | --- | --- |
+| localhost | 27017 | requestsDB | request | Offer |
+
 
 
 ```
@@ -498,10 +503,13 @@ mongodb:
   uri: "mongodb://${MONGO_HOST:localhost}:${MONGO_PORT:27017}"
 ```
 
+Now, we can start to write RequestService class. First, we will do the following steps: 
+1) Inject mongoClient bean. 
+2)  
 
 ```java 
 @Singleton
-public class RequestServices {
+public class RequestService {
 
     private final MongoClient mongoClient;
 
