@@ -1,5 +1,6 @@
 # Service Requests-Offers Microservices
 
+
 What Is Micronaut?
 In a nutshell, Micronaut is a lightweight, JVM-based framework that's ahead of compilation time, with less startup time.
 
@@ -96,9 +97,11 @@ runtime "io.micronaut.configuration:micronaut-jdbc-tomcat"
 ```
 
 After adding the Micronaut Data dependencies, configure the database connection in application.yml file. The configurations are 
+
 | url | driverClassName | username | password | dialect |
 | --- | --- | --- | --- | --- |
 | jdbc:mysql://127.0.0.1:3306/helloworlddb | com.mysql.cj.jdbc.Driver | root | Hello@1234 | MYSQL |
+
 ```
 src\main\resources\application.yml
 ```
