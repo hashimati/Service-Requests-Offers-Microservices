@@ -77,7 +77,10 @@ Consul is a service discovery solution which is maintained by HashiCorp. You can
 ```
 
 ### Step 2: Users Service 
-Users Service is a user management and JWT propagation service. The service will provide basiclly user registration, authentication and authorization functions. The service will handle user objects and store them into MySQL instance. User POJO has three attributes of string data type which are username, password, and roles. The roles are represented as a string delimated by commas. The service will use Micronaut Data API to handle CRUD operations. As prerequisite, add Micronaut Data dependcies for JDBC and MySQL dependencies
+Users Service is a user management and JWT propagation service. The service will provide basiclly user registration, authentication and authorization functions. The service will handle user objects and store them into MySQL instance. User POJO has three attributes of string data type which are username, password, and roles. The roles are represented as a string delimated by commas. The service will use Micronaut Data API to handle CRUD operations. 
+
+#### Creating User POJO
+As prerequisite, add Micronaut Data dependcies for JDBC and MySQL dependencies
 ```gradle
 annotationProcessor 'io.micronaut.data:micronaut-data-processor:1.0.0.M4'
 runtime 'io.micronaut.configuration:micronaut-jdbc-hikari'
@@ -203,6 +206,7 @@ public interface UserRepository extends CrudRepository<User, Long>
 ```
 In UserRepository, we defined two funcitons: findUserByUsername(String username) to retreive a particular user object by username and existsByUsername(String username) function which returns true if the user exist in the database or false if the user is not exist in the database. 
 
+#### Security Configuration
 Now, we are ready to work with security configuration. Micronaut has simplified the implementation of JWT authentication and authorization. To implement security we need to create your AuthenticationProvider class and configure JWT properties in application.yml file. Before these two steps, we need to encrypt the user's password before storing it into the database. To acheive this goal, we will use BCryptPasswordEncoder of spring-security-crypto API to encrypt and match passwords. 
 ```build
 // https://mvnrepository.com/artifact/org.springframework.security/spring-security-crypto
@@ -339,11 +343,103 @@ micronaut:
 9) To enable propagation 
 10) To provide the services ids to which the UsersService will propagate the JWT secret. 
 
+#### Service Discovery Client Configuration: 
+If you want to use Netfilx Eureka Discovery add Eureka configuration, add Eureka client configurations to application.yml file
+```
+src\main\resources\application.yml
+```
+```yml
+ eureka:
+   client:
+     enabled: true
+     registration:
+       enabled: true
+     defaultZone: "${EUREKA_HOST:localhost}:${EUREKA_PORT:8761}"
+```
+But if you prefer to use Consul, add Consul client configuraiton instead of Eureka client configurations. 
+```yml
+consul:
+  client:
+    registration:
+      enabled: true
+    defaultZone: "${CONSUL_HOST:localhost}:${CONSUL_PORT:8500}"
+```
+The Service Discovery client configurations are common in UsersService, RequestsService, and OffersService. 
+
 ### Step 3: Requests Service 
-to be written
+Requests Service is a Microservice which produces Requests related services. This services is Micronaut service. To generate this servcies run this command: 
+```shell
+```
+In this service will define Service Request Pojo and Offer classes. These two classes will be defined in both Requests service and Offer services. Both requests and offers objects are stored in MongoDB instance. We will define the Request Pojo as follwoing
+
+```java 
+import java.util.Date;
+import io.hashimati.requestservice.domains.enums.RequestStatus;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
+@EqualsAndHashCode
+@Data
+public class Request {
+    private String id, type, title, detail, requesterName, city;
+
+    private RequestStatus status = RequestStatus.INITIATED;
+    private Date date , lastUpdate = date = new Date();
+
+    private Location location; 
+    
+}
+```
+The Request object has three possible statuses: INITIATED, DONE, and CANCELED.  
+```java
+public enum RequestStatus {
+    INITIATED, DONE, CANCELED ;
+}
+```
+The Offer Pojo is define like this 
+```java
+import java.util.Date;
+import io.hashimati.requestservice.domains.enums.OfferStatus;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
+@EqualsAndHashCode
+@Data
+public class Offer {
+    private String id, by, message, orderNumber;
+    private double price; 
+    private OfferStatus status = OfferStatus.SENT;
+    private Date date , lastUpdate = date = new Date();
+}
+```
+Offer object should have one of the following statuses: SENT, REJECTED, ACCEPTED 
+```java
+public enum OfferStatus {
+    ACCEPTED, REJECTED, SENT;
+}
+```
+Based on Request class, we will implement two classes.The fiest one is RequestService to handle the requests object. The second class is RequestController which exposes the REST servies that are related to Requests objects.
+
+----- to write something here. 
+
+The Requests uses HttpClient intrerface to handle Offer object by consumeing the required services from OffersServices. You learn more about it in "Step 5: Interaction Between RequestsServcie and OffersService" Section. 
+
 ### Step 4: Offers Service
 to be written
-### Step 5 Gateway
+### Step 5: Interaction Between RequestsServcie and OffersService
+### Step 6 Gateway
 to be written
 ## Running Application
 1. Ensure MySql and MongoDB instances are installed, configured and run. 
