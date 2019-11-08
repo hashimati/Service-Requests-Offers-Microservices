@@ -94,6 +94,23 @@ compile group: 'mysql', name: 'mysql-connector-java', version: '8.0.17'
 compileOnly 'jakarta.persistence:jakarta.persistence-api:2.2.2'
 runtime "io.micronaut.configuration:micronaut-jdbc-tomcat"
 ```
+
+After adding the Micronaut Data dependencies, configure the database connection in application.yml file. The configurations are 
+| url | driverClassName | username | password | dialect |
+| --- | --- | --- | --- | --- |
+| jdbc:mysql://127.0.0.1:3306/helloworlddb | com.mysql.cj.jdbc.Driver | root | Hello@1234 | MYSQL |
+```
+src\main\resources\application.yml
+```
+```yml
+datasources:
+  users:
+    url: jdbc:mysql://127.0.0.1:3306/helloworlddb
+    driverClassName: com.mysql.cj.jdbc.Driver
+    username: root
+    password: 'Hello@1234'
+    dialect: MYSQL
+```
 Now, let's define the User POJO: 
 ```
 /src/java/main/io/hashimati/usersservices/domains
@@ -403,7 +420,7 @@ public class Request {
     
 }
 ```
-The Request object has three possible statuses: INITIATED, DONE, and CANCELED. The "location" attribute in the Request class will be used to by Service Provider users to find requests near to them using MongoDB Geospecial features. In this artical, we will not talk about this feature but you can review the implementation in source code repository.
+The Request object has three possible statuses: INITIATED, DONE, and CANCELED. The "location" attribute in the Request class will be used to by Service Provider users to find requests near to them using MongoDB Geospecial features. In this artical, we will not talk about this feature but you can review the implementation in the source code repository.
 
 ```
 src\main\java\io\hashimati\requestservice\domains\enums\RequestStatus.java
@@ -439,8 +456,6 @@ public class Location {
 
 ```
 
-
-
 The Offer Pojo is define like this 
 ```java
 import java.util.Date;
@@ -469,9 +484,49 @@ public enum OfferStatus {
     ACCEPTED, REJECTED, SENT;
 }
 ```
-Based on Request class, we will implement two classes.The fiest one is RequestService to handle the requests object. The second class is RequestController which exposes the REST servies that are related to Requests objects.
+Based on Request class, we will implement two classes.The fiest one is RequestService to handle the requests object. The second class is RequestController which exposes the REST servies that are related to Requests objects. Before starting the implemenation of the RequestsServices class, we need to configure MongoDB instance's URI in application.yml file. The MongoDB instance is lestining on port 27017. 
 
------ to write something here. 
+
+```
+src\main\resources\application.yml
+```
+```yml
+mongodb:
+  uri: "mongodb://${MONGO_HOST:localhost}:${MONGO_PORT:27017}"
+```
+
+
+```java 
+@Singleton
+public class RequestServices {
+
+    private final MongoClient mongoClient;
+
+    public RequestServices(MongoClient mongoClient)
+    {
+        this.mongoClient = mongoClient;
+    }
+
+
+    private MongoCollection<Request> getCollection() {
+            return mongoClient
+                .getDatabase("requestsDB")
+                .getCollection("requests", Request.class);
+    }
+
+    private Single<Request> findAsSingle(BsonDocument query)
+    {
+
+        return Single.fromPublisher(getCollection().find(query)); 
+    }
+    
+    private Flowable<Request> findAsFlowable(BsonDocument query)
+    {
+    	return Flowable.fromPublisher(getCollection().find(query)); 
+    }
+    ...
+}
+```
 
 The Requests uses HttpClient intrerface to handle Offer object by consumeing the required services from OffersServices. You learn more about it in "Step 5: Interaction Between RequestsServcie and OffersService" Section. 
 
