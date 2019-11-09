@@ -505,7 +505,9 @@ mongodb:
 
 Now, we can start to write RequestService class. First, we will do the following steps: 
 1) Inject mongoClient bean. 
-2)  
+2) Implement getCollection() function which returns "requests" collection. 
+3) Implement findAsSingle() function which takes MongoDB query as BsonDocument object and returns Single<Request> object or nothing. This method will be used whenever we want to retreive on Request object.
+4) Implement findAsSingle() function which takes MongoDB query as BsonDocument object and returns stream of Request objects. This method will be invoked whenever we want to retreive a stream of Request objects. 
 
 ```java 
 @Singleton
@@ -537,6 +539,67 @@ public class RequestService {
     }
     ...
 }
+```
+In RequstService, save() function will store Request object into requests collection. Each request should have unique ID. So the easy way to create unique is use this format username_incrementalNo. So, whenver, whenever the method receives new Request object from as specific user, it will count the requests of that user. Next, it will add one to the counting result. Then, it will set the request ID based on that format and the request's status to INITIATED which mean that the system receives the request. The method basically will reteive Single<Request> object with new ID. 
+
+```java
+@Singleton
+public class RequestService {
+ ...
+ public Single<Request> save(Request request){
+
+        Long x = Single.fromPublisher(getCollection()
+                .countDocuments(new BsonDocument()
+                        .append("requesterName", new BsonString(request.getRequesterName()))))
+                        .blockingGet();
+        request.setId(request.getRequesterName() + "_" + x.longValue());
+   
+	request.setStatus(RequestStatus.INITIATED);
+   
+   	return   Single.fromPublisher(getCollection().insertOne(request))
+                .map(success->request);
+
+    }
+...
+}    
+```
+In RequestService, we define the below RequestObject retrieval functions which are using findAsSingle() and FindAsFlow() functions
+
+| function | Description |
+| --- | --- |
+| findRequestByNo(String requestNo) | It retrieve a request by request number attribute |
+| findAll() | It retreives all INITIATED requests in the system |
+| findAll(String username) | It retreives all requests of the user |
+| findByCity(String city) | to find the INITIATED requests in a specific city |
+| findNearBy(location) | to find the INITIATED requests near by service provider. |
+```java
+@Singleton
+public class RequestService {
+ ...
+    public Single<Request> findRequestByNo(String requestNo) {
+        return findAsSingle(new BsonDocument().append("_id", new BsonString(requestNo))); 
+    }
+    
+    public Flowable<Request> findAll()
+    {
+            BsonDocument query = new BsonDocument().append("status", new BsonString(RequestStatus.INITIATED.toString())); 
+            return findAsFlowable(query); 
+    }
+    
+    public Flowable<Request> findAll(String username){
+        return findAsFlowable(new BsonDocument()
+                                .append("requesterName", new BsonString(username))); 
+    }
+    
+    public Flowable<Request> findByCity(String city) {
+        BsonDocument query = new BsonDocument()
+        .append("status", new BsonString(RequestStatus.INITIATED.toString()))
+        .append("city", new BsonString(city)); 
+	
+        return findAsFlowable(query); 
+    }
+...
+}  
 ```
 
 The Requests uses HttpClient intrerface to handle Offer object by consumeing the required services from OffersServices. You learn more about it in "Step 5: Interaction Between RequestsServcie and OffersService" Section. 
