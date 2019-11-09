@@ -655,12 +655,84 @@ The Requests uses HttpClient intrerface to handle Offer object by consumeing the
 
 ### Step 4: Offers Service
 
-Offers Service is a Micronaut service produces services related to the Offer objects. before starting the implemenation of the Offer object configure service discovery client and JWT propagatio validation. 
+Offers Service is a Micronaut service produces services related to the Offer objects. before starting the implemenation of the Offer object configure service discovery client and JWT propagatio validation. Also add the Request, Offer, Location, RequestStatus, OfferStatus, and Roles classes which are already explained previously. 
 
-The main domain which drive this service is Offer. The offer could be defined as following: 
+The main domain which drive this service is Offer. So, it's required to create OfferService and OfferController classes. 
+
+
 ```java 
- 	
+@Singleton
+public class OfferServices {
+    @Inject 
+     RequestsClient requestsClient; 
+
+    private final MongoClient mongoClient;
+    public OfferServices(MongoClient mongoClient)
+    {
+        this.mongoClient = mongoClient;
+    }
+    
+    private MongoCollection<Offer> getCollection() {
+
+    
+            return mongoClient
+                .getDatabase("requestsDB")
+                .getCollection("offers", Offer.class);
+    }
+    private Single<Offer> findAsSingle(BsonDocument query)
+    {
+        return Single
+        .fromPublisher(getCollection()
+        .find(query)); 
+    }
+
+    private Flowable<Offer> findAsFlowable(BsonDocument query)
+    {
+        return Flowable
+        .fromPublisher(getCollection()
+        .find(query)); 
+    }
+...
+}
 ```
+
+
+```java
+   public Single<Offer> save(Offer offer, String token){
+        
+        Single<Request> request = requestsClient.findRequestByNo(offer.getOrderNumber(), token);
+                
+        if(request.blockingGet().getStatus() == RequestStatus.INITIATED){
+        
+        Long i = Single.fromPublisher(getCollection().countDocuments(new BsonDocument()
+                    .append("providerName", new BsonString(offer.getProviderName()))))
+                    .blockingGet();  
+
+        offer.setId(offer.getProviderName() + "_" + (i.longValue() + 1) ); 
+        return Single.fromPublisher(getCollection().insertOne(offer))
+                .map(success->offer);
+        }
+        else{
+        
+            offer.setStatus(OfferStatus.REJECTED);
+            return Single
+                .fromPublisher(null)
+                .map(success->offer); 
+        }
+
+    }
+```
+
+```java 
+    public Flowable<Offer> findOffersByRequestNo(String requestNo)
+    {
+        return findAsFlowable(new BsonDocument().append("orderNumber", new BsonString(requestNo))); 
+
+        
+    }
+    
+```
+
 ### Step 5: Interaction Between RequestsServcie and OffersService
 ### Step 6 Gateway
 to be written
