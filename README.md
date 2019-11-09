@@ -396,6 +396,9 @@ Requests Service is a Microservice which produces Requests related services. Thi
 ```shell
 > mn create-app io-hashimati-RequestsService --profile service --lang java --build gradle --features discovery-eureka --features security-jwt --features mongo-reactive 
 ```
+#### Security Configuration 
+The first step is to configure JWT security. The RequestService and OfferService are getting JWT propagation from UsersServices. So, the users cannot be authenticated by these two services. So, they will only validate the JWT token. So, we need to ensure the JWT validation configuration to application.yml
+
 In this service will define Service Request Pojo and Offer classes. These two classes will be defined in both Requests service and Offer services. Both requests and offers objects are stored in MongoDB instance. We will define the Request Pojo as follwoing
 
 
@@ -601,8 +604,41 @@ public class RequestService {
 ...
 }  
 ```
+In the RequestsService class, there is takeAction(String requestId, RequestStatus done) function. this function will be used to change status of the of the request. 
+
+```java 
+	public Single<String> takeAction(String requestId, RequestStatus done){
+        	BsonDocument filter = new BsonDocument().append("_id", new BsonString(requestId)); 
+        	Request request = findAsSingle(filter).blockingGet(); 
+        	request.setStatus(done);
+		
+		return Single.fromPublisher(getCollection().findOneAndReplace(filter, request))
+		.map(success->"success"
+		.onErrorReturnItem("failed"); 
+	}
+
+```
+Finally, all the function in the RequestService class will be exposed in RequestController class. The RequestController class is injected with two beans: 
+1) RequestService: To expose RequestService's functions.
+2) offersClient: offerClient will be explained in Step 5. 
+
+```java
+@Controller("/api")
+public class RequestController {
+
+
+    @Inject
+    private RequestServices requestServices;
+
+    @Inject
+    private OffersClient offersClient; 
+
+}
+```
+
 
 The Requests uses HttpClient intrerface to handle Offer object by consumeing the required services from OffersServices. You learn more about it in "Step 5: Interaction Between RequestsServcie and OffersService" Section. 
+
 
 ### Step 4: Offers Service
 to be written
