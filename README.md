@@ -201,7 +201,7 @@ liquibase:
       change-log: 'classpath:db/liquibase-changelog.xml'
 ```
 
-As mentioned in the requirement, the user could be Service requester as "user" or Service provider as "service_provider". So, we will declare these two roles as two constant attributes of type string under Roles.java class. 
+As mentioned in the requirement, the user could be Service requester as "user" or Service provider as "service_provider". So, we will declare these two roles as two constant attributes of type string under Roles.java class. The Roles Class will be replicated in Requests Service and Offers Services. 
 ```
 src\main\java\io\hashimati\usersservices\constants\Roles.java
 ```
@@ -397,8 +397,21 @@ Requests Service is a Microservice which produces Requests related services. Thi
 > mn create-app io-hashimati-RequestsService --profile service --lang java --build gradle --features discovery-eureka --features security-jwt --features mongo-reactive 
 ```
 #### Security Configuration 
-The first step is to configure JWT security. The RequestService and OfferService are getting JWT propagation from UsersServices. So, the users cannot be authenticated by these two services. So, they will only validate the JWT token. So, we need to ensure the JWT validation configuration to application.yml
+The first step is to configure JWT security. The RequestService and OfferService are getting JWT propagation from UsersServices. So, the users cannot be authenticated by these two services. So, they will only validate the JWT token. So, we need to ensure the JWT validation configuration to application.yml of RequestsService and OffersService. 
+```yml
+micronaut:
+  security:
+    enabled: true
+    token:
+      jwt:
+        enabled: true
+        signatures:
+          secret:
+            validation: # to vlidate token. 
+              secret: pleaseChangeThisSecretForANewOne
+```
 
+#### Requests Service Implemenation. 
 In this service will define Service Request Pojo and Offer classes. These two classes will be defined in both Requests service and Offer services. Both requests and offers objects are stored in MongoDB instance. We will define the Request Pojo as follwoing
 
 
