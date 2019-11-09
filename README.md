@@ -654,7 +654,13 @@ The Requests uses HttpClient intrerface to handle Offer object by consumeing the
 
 
 ### Step 4: Offers Service
-to be written
+
+Offers Service is a Micronaut service produces services related to the Offer objects. before starting the implemenation of the Offer object configure service discovery client and JWT propagatio validation. 
+
+The main domain which drive this service is Offer. The offer could be defined as following: 
+```java 
+ 	
+```
 ### Step 5: Interaction Between RequestsServcie and OffersService
 ### Step 6 Gateway
 to be written
