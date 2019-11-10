@@ -12,8 +12,6 @@ Service Requess-Offers Microservices is a simple microservices application using
 4. Using Micronaut Data with MySQL and Liquibase.
 5. Using Reactive Mongodb.
 
-
-
 ## Requirements Description (Story)
   
   John wants to do a full maintenace for his apartment. He heared about an application Called "Request-Offer" app which will help him to find a maintenance with a good offer. John sends a request to "Request-Offer" service. On other hand, Mike is service provider. Mike sees John's offer. Mike sends a good offer to "Request-Offer" service with competitive price to meet John's request. John accepts Mike's offer among alot of other offers.
@@ -807,7 +805,14 @@ Storing offer object will be explained in step 5. So, we will implement offers r
 ```
 ### Step 5: Interaction Between RequestsServcie and OffersService
 
+In the scope of the given requirment, the RequestsService and OffersServices are interacting and exchanging services in three functios: 
 
+1) Submiting offer. 
+2) Accepting Offer. 
+3) Rejecting Offer. 
+
+#### Sumitting Offer
+// to do
 ```java
    public Single<Offer> save(Offer offer, String token){
         
@@ -833,9 +838,21 @@ Storing offer object will be explained in step 5. So, we will implement offers r
 
     }
 ```
+#### Accepting Offer
+// to do
+#### Rejecting Offer
+// Todo
+
 
 ### Step 6 Gateway
-to be written
+
+//Todo
+description
+setup
+configure Discovery
+configure routes
+JWT
+
 ## Running Application
 1. Ensure MySql and MongoDB instances are installed, configured and run. 
 
