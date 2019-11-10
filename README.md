@@ -634,7 +634,19 @@ In the RequestsService class, there is takeAction(String requestId, RequestStatu
 Finally, all the function in the RequestService class will be exposed in RequestController class. The RequestController class is injected with two beans: 
 1) RequestService: To expose RequestService's functions.
 2) offersClient: offerClient will be explained in Step 5. 
+3) The below table explains the most important endpoints for the requirements scope. 
 
+| Function | Route | Method | Description | Role |
+| --- | --- | --- | --- | --- |
+| saveRequest() | /api/submit | POST | to save method | USER |
+| findRequestByNo() | /api/requests/{requestId} | GET | to retreive request by request number | SERVICE_PROVIDER and USER |
+| findByCity() | /api/requests/getRequestIn{city} | GET | to get all INITIATED requests by city | SERVICE_PROVIDER and USER |
+| findAll() | /api/requests/getAll | GET | to get all INITIATED requests |  SERVICE_PROVIDER and USER | 
+| findAll(Principle) | /api/requests | GET | To get all requests of the user | USER |
+| rejectOffer() | /api/requests/reject/{requestId}/{offerId} | GET | To Reject Particular Offer | USER |
+| acceptOffer() | /api/requests/accept/{requestId}/{offerId} | GET | To accept particular offer | USER |
+
+ 
 ```java
 @Controller("/api")
 public class RequestController {
@@ -646,12 +658,56 @@ public class RequestController {
     @Inject
     private OffersClient offersClient; 
 
+    @Secured({Roles.USER})
+    @Post("/submit")
+    public Single<Request> saveRequest(@Body Request request, Principal principal )
+    {
+        request.setRequesterName(principal.getName());
+        return requestService.save(request);
+    }
+
+    @Secured({Roles.SERVICE_PROVIDER, Roles.USER})
+    @Get("/requests/{requestId}")
+    public Single<Request> findRequestByNo(@PathVariable(value ="requestId" ) String requestId){
+
+        return requestService.findRequestByNo(requestId); 
+    }
+
+    @Secured({Roles.SERVICE_PROVIDER, Roles.USER})
+    @Get("/requests/getAll")
+    public Flowable<Request> findAll(){
+
+        return requestService.findAll(); 
+    }
+
+    @Secured({Roles.SERVICE_PROVIDER, Roles.USER})
+    @Get("/requests/getRequestIn{city}")
+    public Flowable<Request> findByCity(@PathVariable("city") String city){
+        return requestService.findByCity(city); 
+    }
+
+    @Secured({Roles.SERVICE_PROVIDER, Roles.USER})
+    @Post("/requests/getRequestNearToMe")
+    public Flowable<Request> findNearBy(@Body HashMap<String,Double> location){
+        if(location.containsKey("longitude") && location.containsKey("latitude"))
+               return requestService.findNearBy(location);
+              
+         else 
+            return Flowable.just(null); 
+    }
+
+    
+    @Secured({Roles.USER})
+    @Get("/requests/")
+    public Flowable<Request> findAll(Principal principal){
+        return requestService.findAll(principal.getName()); 
+
+    }
+    
+ 
 }
 ```
-
-
-The Requests uses HttpClient intrerface to handle Offer object by consumeing the required services from OffersServices. You learn more about it in "Step 5: Interaction Between RequestsServcie and OffersService" Section. 
-
+As shown, we used @Secured annotation to secure the endpoint and to control the resource authorization. rejectOffer() and acceptOffer() methods will be explained in step 5. 
 
 ### Step 4: Offers Service
 
