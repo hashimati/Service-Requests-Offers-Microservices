@@ -655,11 +655,16 @@ The Requests uses HttpClient intrerface to handle Offer object by consumeing the
 
 ### Step 4: Offers Service
 
-Offers Service is a Micronaut service produces services related to the Offer objects. before starting the implemenation of the Offer object configure service discovery client and JWT propagatio validation. Also add the Request, Offer, Location, RequestStatus, OfferStatus, and Roles classes which are already explained previously. 
+Offers Service is a Micronaut service produces services related to the Offer objects. before starting the implemenation of the Offer object configure service discovery client, Mongodb configuration and JWT propagation validation. Also add the Request, Offer, Location, RequestStatus, OfferStatus, and Roles classes which are already explained previously. 
 
-The main domain which drive this service is Offer. So, it's required to create OfferService and OfferController classes. 
+The main domain which drives this service is Offer. So, it's required to create OfferService and OfferController classes. So, we will create an OfferService class. The OfferService class handle Offer objects CRUD functions. Initially, we will the follwoing in OfferService: 
 
-
+1) Inject MongoClient bean. 
+2) Inject a requestClient bean. the requestClient bean calls services from RequestsService. 
+3) Create getCollection() method to retrieve "offers" collectons from mongoClient bean. 
+4) Implement findAsSingle() function which takes MongoDB query as BsonDocument object and returns Single<Offer> object or nothing. This method will be used whenever we want to retreive on Offer object.
+5) Implement findAsSingle() function which takes MongoDB query as BsonDocument object and returns stream of Offer objects. This method will be invoked whenever we want to retreive a stream of Offer objects. 
+	
 ```java 
 @Singleton
 public class OfferServices {
