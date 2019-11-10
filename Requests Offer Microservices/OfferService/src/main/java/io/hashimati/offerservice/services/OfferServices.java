@@ -14,7 +14,6 @@ import io.hashimati.offerservice.domains.Offer;
 import io.hashimati.offerservice.domains.Request;
 import io.hashimati.offerservice.domains.enums.OfferStatus;
 import io.hashimati.offerservice.domains.enums.RequestStatus;
-import io.micronaut.security.utils.SecurityService;
 import io.reactivex.Flowable;
 import io.reactivex.Single;
 
@@ -24,9 +23,6 @@ public class OfferServices {
 
     @Inject 
      RequestsClient requestsClient; 
-
-    @Inject
-    SecurityService securityService; 
 
 
     private final MongoClient mongoClient;
@@ -57,16 +53,11 @@ public class OfferServices {
     }
     public Single<Offer> save(Offer offer, String token){
         
-
-        
-        Single<Request> request = requestsClient.findRequestByNo(offer.getOrderNumber(), token);
-        
-        request.doOnError(System.out::println);
-        
+        Single<Request> request = requestsClient.findRequestByNo(offer.getRequestNumber(), token);
+                
         if(request.blockingGet().getStatus() == RequestStatus.INITIATED){
         
         Long i = Single.fromPublisher(getCollection().countDocuments(new BsonDocument()
-              //.append("orderNumber", new BsonString(offer.getOrderNumber()))
                     .append("providerName", new BsonString(offer.getProviderName()))))
                     .blockingGet();  
 
@@ -83,13 +74,16 @@ public class OfferServices {
         }
 
     }
-    public Flowable<Offer> findOffersByRequestNo(String requestNo)
+    public Flowable<Offer> findOffersByRequestNo(String requestNumber)
     {
-        return findAsFlowable(new BsonDocument().append("orderNumber", new BsonString(requestNo))); 
-
-        
+        return findAsFlowable(new BsonDocument().append("requestNumber", new BsonString(requestNumber))); 
     }
 
+    public Flowable<Offer> findOffersByRequesterNoAndProviderName(String requestNumber, String username)
+    {
+        return findAsFlowable(new BsonDocument().append("requestNumber", new BsonString(requestNumber)
+        ).append("providerName", new BsonString(username)));
+    }
 
 	public Single<String> takeAction(String requestId, String offerId, OfferStatus offerStatus,String username){
         BsonDocument filter = new BsonDocument()

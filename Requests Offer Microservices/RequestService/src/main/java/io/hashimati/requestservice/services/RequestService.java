@@ -19,12 +19,12 @@ import io.reactivex.Single;
 
 
 @Singleton
-public class RequestServices {
+public class RequestService {
 
     private final MongoClient mongoClient;
     
 
-    public RequestServices(MongoClient mongoClient)
+    public RequestService(MongoClient mongoClient)
     {
         this.mongoClient = mongoClient;
     }
@@ -59,7 +59,6 @@ public class RequestServices {
                 .countDocuments(new BsonDocument()
                         .append("requesterName", new BsonString(request.getRequesterName()))))
                         .blockingGet();
-
         request.setId(request.getRequesterName() + "_" + x.longValue());
         request.setStatus(RequestStatus.INITIATED);
 
@@ -77,34 +76,15 @@ public class RequestServices {
     public Flowable<Request> findAll()
     {
             BsonDocument query = new BsonDocument().append("status", new BsonString(RequestStatus.INITIATED.toString())); 
-
             return findAsFlowable(query); 
 
     }
-
+    
     public Flowable<Request> findAll(String username){
         return findAsFlowable(new BsonDocument()
                                 .append("requesterName", new BsonString(username))); 
     }
-
-	public Single<String> takeAction(String requestId, RequestStatus done){
-        BsonDocument filter = new BsonDocument().append("_id", new BsonString(requestId)); 
-
-        Request request = findAsSingle(filter).blockingGet(); 
-        //Single.fromPublisher(getCollection().find(filter).limit(1).first()).blockingGet(); 
-        request.setStatus(done);
-
-
-
-        return Single.fromPublisher(getCollection().findOneAndReplace(filter, request))
-        .map(success->"success")
-        .onErrorReturnItem("failed"); 
-        
-
-
-	}
-	
-	public Flowable<Request> findByCity(String city) {
+    public Flowable<Request> findByCity(String city) {
         BsonDocument query = new BsonDocument()
         .append("status", new BsonString(RequestStatus.INITIATED.toString()))
         .append("city", new BsonString(city)); 
@@ -137,5 +117,25 @@ public class RequestServices {
         {
             return Flowable.just(null); 
         }
-    }	
+    }
+
+
+	public Single<String> takeAction(String requestId, RequestStatus done){
+        BsonDocument filter = new BsonDocument().append("_id", new BsonString(requestId)); 
+
+        Request request = findAsSingle(filter).blockingGet(); 
+        //Single.fromPublisher(getCollection().find(filter).limit(1).first()).blockingGet(); 
+        request.setStatus(done);
+
+
+
+        return Single.fromPublisher(getCollection().findOneAndReplace(filter, request))
+        .map(success->"success")
+        .onErrorReturnItem("failed"); 
+        
+
+
+	}
+	
+		
 }

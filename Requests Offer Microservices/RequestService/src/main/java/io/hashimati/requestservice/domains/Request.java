@@ -1,8 +1,6 @@
 package io.hashimati.requestservice.domains;
 
 import java.util.Date;
-
-
 import io.hashimati.requestservice.domains.enums.RequestStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;

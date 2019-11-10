@@ -11,7 +11,7 @@ import io.hashimati.requestservice.constants.Roles;
 import io.hashimati.requestservice.domains.Offer;
 import io.hashimati.requestservice.domains.Request;
 import io.hashimati.requestservice.domains.enums.RequestStatus;
-import io.hashimati.requestservice.services.RequestServices;
+import io.hashimati.requestservice.services.RequestService;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
@@ -27,7 +27,7 @@ public class RequestController {
 
 
     @Inject
-    private RequestServices requestServices;
+    private RequestService requestService;
 
     @Inject
     private OffersClient offersClient; 
@@ -37,37 +37,34 @@ public class RequestController {
     public Single<Request> saveRequest(@Body Request request, Principal principal )
     {
         request.setRequesterName(principal.getName());
-        return requestServices.save(request);
+        return requestService.save(request);
     }
 
     @Secured({Roles.SERVICE_PROVIDER, Roles.USER})
     @Get("/requests/{requestId}")
     public Single<Request> findRequestByNo(@PathVariable(value ="requestId" ) String requestId){
 
-
-
-        return requestServices.findRequestByNo(requestId); 
+        return requestService.findRequestByNo(requestId); 
     }
 
     @Secured({Roles.SERVICE_PROVIDER, Roles.USER})
     @Get("/requests/getAll")
     public Flowable<Request> findAll(){
 
-        return requestServices.findAll(); 
+        return requestService.findAll(); 
     }
 
     @Secured({Roles.SERVICE_PROVIDER, Roles.USER})
     @Get("/requests/getRequestIn{city}")
     public Flowable<Request> findByCity(@PathVariable("city") String city){
-        return requestServices.findByCity(city); 
+        return requestService.findByCity(city); 
     }
-
 
     @Secured({Roles.SERVICE_PROVIDER, Roles.USER})
     @Post("/requests/getRequestNearToMe")
     public Flowable<Request> findNearBy(@Body HashMap<String,Double> location){
         if(location.containsKey("longitude") && location.containsKey("latitude"))
-               return requestServices.findNearBy(location);
+               return requestService.findNearBy(location);
               
          else 
             return Flowable.just(null); 
@@ -77,7 +74,7 @@ public class RequestController {
     @Secured({Roles.USER})
     @Get("/requests/")
     public Flowable<Request> findAll(Principal principal){
-        return requestServices.findAll(principal.getName()); 
+        return requestService.findAll(principal.getName()); 
 
     }
     
@@ -85,35 +82,29 @@ public class RequestController {
     @Secured({Roles.USER})
     @Get("/requests/reject/{requestId}/{offerId}")
     public Single<String> rejectOffer(@PathVariable(value = "requestId") String requestId, @PathVariable(value = "offerId") String offerId, Principal principal, @Header("Authorization") String authentication){
-    
-        
-
 
         return offersClient.rejectOffer(requestId, offerId, authentication); 
-
     }
     @Get("/requests/accept/{requestId}/{offerId}")
     public Single<String> acceptOffer(@PathVariable(value = "requestId") String requestId, @PathVariable(value = "offerId") String offerId, @Header("Authorization") String authentication)
     {
         Single<String> acceptingOfferMessage =  offersClient.acceptOffer(requestId, offerId, authentication);
-        
+
         if(acceptingOfferMessage.blockingGet().toLowerCase().contains("success"))
         {
 
-            return requestServices.takeAction(requestId, RequestStatus.DONE); 
+            return requestService.takeAction(requestId, RequestStatus.DONE); 
         }
         return Single.just("failed"); 
-
     }
+    @Secured({Roles.USER})
     @Get("/offers/{requestNo}")
     public Flowable<Offer> getOffers(@PathVariable("requestNo") String requestNo,Principal principal,  @Header("Authorization") String authentication)
     {
 
         if(principal.getName().toLowerCase().equals
-        (requestNo.substring(0, requestNo.indexOf("_")))){
-           
+        (requestNo.substring(0, requestNo.indexOf("_")))){         
             return offersClient.findOffersByRequestNo(requestNo, authentication); 
-
         }
         return Flowable.just(null); 
     }
