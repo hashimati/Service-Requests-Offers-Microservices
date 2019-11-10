@@ -700,6 +700,56 @@ public class OfferServices {
 ...
 }
 ```
+Storing offer object will be explained in step 5. So, we will implement offers retreival functions. As per the scope of the requirements, we need to implement these  functions: 
+
+| Function | Description |
+| --- | --- | 
+| findOffersByRequestNo() | To offers by request number |
+| findOffersByRequesterNoAndProviderName() | To find offers by request numbers and service provider |
+| findOfferByOfferNumber() | to Find Offer by Id |
+| findOfferByOfferNumberandProviderName() | asdf |
+| takeAction() | To update offer status |
+
+```java 
+    public Flowable<Offer> findOffersByRequestNo(String requestNumber)
+    {
+        return findAsFlowable(new BsonDocument().append("requestNumber", new BsonString(requestNumber))); 
+    }
+
+
+    public Flowable<Offer> findOffersByRequesterNoAndProviderName(String requestNumber, String username)
+    {
+        return findAsFlowable(new BsonDocument().append("requestNumber", new BsonString(requestNumber)
+        ).append("providerName", new BsonString(username)));
+    }
+    public Single<Offer> findOfferByOfferNumber(String offerNumber){
+        return findAsSingle(new BsonDocument().append("_id", new BsonString(offerNumber))); 
+    }
+
+    public Single<Offer> findOfferByOfferNumberandProviderName(String offerNumber, String username)
+    {
+        return findAsSingle(new BsonDocument().append("_id", new BsonString(offerNumber))
+        .append("providerName", new BsonString(username))); 
+
+    }
+    
+    public Single<String> takeAction(String requestId, String offerId, OfferStatus offerStatus,String username){
+        BsonDocument filter = new BsonDocument()
+        .append("_id", new BsonString(offerId)) 
+        .append("orderNumber", new BsonString(requestId))
+        .append("requesterName",new BsonString(username)); 
+        
+        Offer offer = findAsSingle(filter).blockingGet();
+        offer.setStatus(offerStatus); 
+        return Single.fromPublisher(getCollection().findOneAndReplace(filter, offer))
+        .map(x->"Success")
+        .onErrorReturnItem("failed");  
+     }
+ ...   
+ 
+ 
+```
+### Step 5: Interaction Between RequestsServcie and OffersService
 
 
 ```java
@@ -728,17 +778,6 @@ public class OfferServices {
     }
 ```
 
-```java 
-    public Flowable<Offer> findOffersByRequestNo(String requestNo)
-    {
-        return findAsFlowable(new BsonDocument().append("orderNumber", new BsonString(requestNo))); 
-
-        
-    }
-    
-```
-
-### Step 5: Interaction Between RequestsServcie and OffersService
 ### Step 6 Gateway
 to be written
 ## Running Application
