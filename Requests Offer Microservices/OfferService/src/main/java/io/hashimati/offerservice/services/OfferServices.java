@@ -79,12 +79,22 @@ public class OfferServices {
         return findAsFlowable(new BsonDocument().append("requestNumber", new BsonString(requestNumber))); 
     }
 
+
     public Flowable<Offer> findOffersByRequesterNoAndProviderName(String requestNumber, String username)
     {
         return findAsFlowable(new BsonDocument().append("requestNumber", new BsonString(requestNumber)
         ).append("providerName", new BsonString(username)));
     }
+    public Single<Offer> findOfferByOfferNumber(String offerNumber){
+        return findAsSingle(new BsonDocument().append("_id", new BsonString(offerNumber))); 
+    }
 
+    public Single<Offer> findOfferByOfferNumberandProviderName(String offerNumber, String username)
+    {
+        return findAsSingle(new BsonDocument().append("_id", new BsonString(offerNumber))
+        .append("providerName", new BsonString(username))); 
+
+    }
 	public Single<String> takeAction(String requestId, String offerId, OfferStatus offerStatus,String username){
         BsonDocument filter = new BsonDocument()
         .append("_id", new BsonString(offerId)) 
@@ -92,16 +102,9 @@ public class OfferServices {
         .append("requesterName",new BsonString(username)); 
         
         Offer offer = findAsSingle(filter).blockingGet();
-        
         offer.setStatus(offerStatus); 
-        
-        
         return Single.fromPublisher(getCollection().findOneAndReplace(filter, offer))
         .map(x->"Success")
         .onErrorReturnItem("failed");  
 	}
-
-
-	
-
 }
