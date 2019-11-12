@@ -811,8 +811,10 @@ In the scope of the given requirment, the RequestsService and OffersServices are
 2) Accepting Offer. 
 3) Rejecting Offer. 
 
-#### Sumitting Offer
-// to do
+#### Submitting Offer
+Submitting offer REST service is produced by Offers Service. Once the service provider user sumbits an order, the system should check the status of the service request beforing storing the offer in the database. The system should link the offer to INITIATED service request only. So, the offers service will ask the requests service for service request status. In order to acheive this step, you need to create Request Service Client interface. The client interface is annotated with @Client annotation. in the client annoation, should pass the requests service name. 
+
+
 ```java
    public Single<Offer> save(Offer offer, String token){
         
