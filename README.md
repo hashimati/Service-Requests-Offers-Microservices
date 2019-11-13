@@ -984,7 +984,7 @@ security:
       jwt:
         key-value: pleaseChangeThisSecretForANewOne
 ```
-Next, implement the resouce configuration to secure the endpoints. 
+Next, implement the resouce configuration class to the endpoints' security configurations.
 ```java
 Configuration
  @EnableResourceServer
@@ -1048,5 +1048,23 @@ To start Eureka, run this command from Eureka directory:
 ```shell
 > gradlew bootRun
 ```
+## Trying Services
+1. Creating User: 
+```
+curl --header "X-MyHeader: 123" www.google.com
+```
+2. Creating Service Provider:
+3. Login: 
+curl --user name:password http://www.example.com
+
+4. Submitting Requests: 
+curl -X POST --data "birthyear=1905&press=%20OK%20"  http://www.example.com/when.cgi
+
+5. Getting Offers: 
+
+6. Submiting Offer: 
+curl -X POST --header "Authorization: Bearer jwtToken"  --data "x=sadfj&y=slkdfj" http://example.com
+
+7. Accepting Offer: 
 
 ## Conclusion
