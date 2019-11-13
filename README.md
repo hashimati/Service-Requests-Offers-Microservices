@@ -812,9 +812,30 @@ In the scope of the given requirment, the RequestsService and OffersServices are
 3) Rejecting Offer. 
 
 #### Submitting Offer
-Submitting offer REST service is produced by Offers Service. Once the service provider user sumbits an order, the system should check the status of the service request beforing storing the offer in the database. The system should link the offer to INITIATED service request only. So, the offers service will ask the requests service for service request status. In order to acheive this step, you need to create Request Service Client interface. The client interface is annotated with @Client annotation. in the client annoation, should pass the requests service name. 
+Submitting offer REST service is produced by Offers Service. Once the service provider user sumbits an order, the system should check the status of the service request beforing storing the offer in the database. The system should link the offer to INITIATED service request only. So, the offers service will ask the requests service for service request status. In order to acheive this step, you need to create Request Service Client interface. The client interface is annotated with @Client annotation. In the client annoation, you should pass the requests service name. The RequestClient is defined as following: 
 
+```java
+ @Client(id="request-services", path = "/api")
+public interface RequestsClient {
 
+    @Secured({Roles.SERVICE_PROVIDER, Roles.USER})
+    @Get("/requests/{requestId}")
+    public Single<Request> findRequestByNo(@PathVariable(value ="requestId" ) String requestNo, @Header("Authorization") String authentication);   
+    
+}
+```
+In the client interface, we define the 4 items to enable offer service to talk with request service. 
+1) @Client: In this annotation, passed service name "request-services" in the "id" attribute and root path of findRequestByNo() function which is "/api". 
+2) @Secured: Put the roles of the users. 
+3) @Get: pass the path of the service. the "path" attribue in @Client and "value" in @Get combinded are the path of the REST findRequestNo(). 
+4) findRequestByNo(): findRequestByNo() signature should be identical to the signature of the findRequestByNo() in the RequestController.java. You can rename this function to any name. we use findRequestByNo() to be consistent with corrosponding one in RequestController.java in the RequestService. 
+5) @Header("Authorization") String authentication: In findRequestByNo() signature we add "authentication" parameter for security. In the "authentication" parameter, you should pass JWT Bearer token. In order to authorize the user to consume this service. This parameter isn't nessary to be in the corresponding function in the RequestController.java. 
+
+In OfferController.java, we will implement save() function which is storing offers object to the MongoDB instance. The save() function has to parameters: 
+1) offer: It the offer object. 
+2) token: it is the JWT Bearer token. The token should be passed into "authentication" attribue of the "requestsClient.findRequestsByNo()". The token will fetched from REST service endpoint. 
+
+The implmenentation will be as following: 
 ```java
    public Single<Offer> save(Offer offer, String token){
         
