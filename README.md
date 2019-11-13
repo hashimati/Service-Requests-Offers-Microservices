@@ -5,7 +5,7 @@ What Is Micronaut?
 In a nutshell, Micronaut is a lightweight, JVM-based framework that's ahead of compilation time, with less startup time.
 
 
-Service Requess-Offers Microservices is a simple microservices application using Micronaut framework. The application covers the following areas:
+Service Request-Offers Microservices is a simple microservices application using Micronaut framework. The application covers the following areas:
 1. Service Discovary using Netflix Eureka or Consul.
 2. Integration with Zuul Gateway.
 3. Securing Microservices with JWT.
@@ -812,7 +812,11 @@ In the scope of the given requirment, the RequestsService and OffersServices are
 3) Rejecting Offer. 
 
 #### Submitting Offer
-Submitting offer REST service is produced by Offers Service. Once the service provider user sumbits an order, the system should check the status of the service request beforing storing the offer in the database. The system should link the offer to INITIATED service request only. So, the offers service will ask the requests service for service request status. In order to acheive this step, you need to create Request Service Client interface. The client interface is annotated with @Client annotation. In the client annoation, you should pass the requests service name. The RequestClient is defined as following: 
+Submitting offer REST service is produced by Offers Service. Once the service provider user sumbits an order, the system should check the status of the service request beforing storing the offer in the database. The system should link the offer to INITIATED service request only. So, the offers service will ask the requests service for service request status. 
+
+![Image_diagram](https://github.com/hashimati/Service-Requests-Offers-Microservices/raw/master/submitting_offer.png)
+
+In order to acheive this step, you need to create Request Service Client interface. The client interface is annotated with @Client annotation. In the client annoation, you should pass the requests service name. The RequestClient is defined as following: 
 
 ```java
  @Client(id="request-services", path = "/api")
@@ -836,7 +840,7 @@ In OfferController.java, we will implement save() function which is storing offe
 2) token: it is the JWT Bearer token. The token should be passed into "authentication" attribue of the "requestsClient.findRequestsByNo()". The token will fetched from REST service endpoint. 
 
 
-![Image_diagram](https://github.com/hashimati/Service-Requests-Offers-Microservices/raw/master/submitting_offer.png)
+
 The implmenentation will be as following: 
 ```java
    public Single<Offer> save(Offer offer, String token){
