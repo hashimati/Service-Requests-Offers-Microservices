@@ -85,6 +85,8 @@ public class RequestController {
 
         return offersClient.rejectOffer(requestId, offerId, authentication); 
     }
+    
+    @Secured({Roles.USER})
     @Get("/requests/accept/{requestId}/{offerId}")
     public Single<String> acceptOffer(@PathVariable(value = "requestId") String requestId, @PathVariable(value = "offerId") String offerId, @Header("Authorization") String authentication)
     {
