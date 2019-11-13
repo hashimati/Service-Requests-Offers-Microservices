@@ -554,7 +554,7 @@ public class RequestService {
     ...
 }
 ```
-In RequstService, save() function will store Request object into requests collection. Each request should have unique ID. So the easy way to create unique is use this format username_incrementalNo. So, whenver, whenever the method receives new Request object from as specific user, it will count the requests of that user. Next, it will add one to the counting result. Then, it will set the request ID based on that format and the request's status to INITIATED which mean that the system receives the request. The method basically will reteive Single<Request> object with new ID. 
+In RequestService, save() function will store Request object into requests collection. Each request should have unique ID. So the easy way to create unique is use this format username_incrementalNo. So, whenver, whenever the method receives new Request object from as specific user, it will count the requests of that user. Next, it will add one to the counting result. Then, it will set the request ID based on that format and the request's status to INITIATED which mean that the system receives the request. The method basically will reteive Single<Request> object with new ID. 
 
 ```java
 @Singleton
@@ -841,7 +841,7 @@ In OfferController.java, we will implement save() function which is storing offe
 
 
 
-The implmenentation will be as following: 
+The implmenentation is as following: 
 ```java
    public Single<Offer> save(Offer offer, String token){
         
@@ -867,21 +867,159 @@ The implmenentation will be as following:
 
     }
 ```
-#### Accepting Offer
-// to do
-#### Rejecting Offer
-// Todo
+#### Accepting & Reject Offer
 
+The concept of implementing accepting and rejecting offer functions is the same as implmentation of the Saving offer function. Accepting and rejecting offer in this microserices archticture are handled via Requests Service. So, before taking the action, we need to implement OfferClient in RequestService application: 
+
+```java
+@Client(id="offers-services", path = "/api")
+public interface OffersClient {
+
+    @Get("/offers/reject/{requestId}/{offerId}")
+    public Single<String> rejectOffer(@PathVariable(name = "requestId") String requestId,
+     @PathVariable(name = "offerId") String offerId, @Header("Authorization") String authentication);
+
+
+     @Get("/offers/accept/{requestId}/{offerId}")
+	public Single<String> acceptOffer(@PathVariable(name = "requestId") String requestId,
+    @PathVariable(name = "offerId") String offerId, @Header("Authorization") String authentication);
+    
+}
+```
+```java 
+@Controller("/api")
+public class RequestController {
+
+   @Inject
+    private OffersClient offersClient;  
+    
+    
+@Secured({Roles.USER})
+    @Get("/requests/reject/{requestId}/{offerId}")
+    public Single<String> rejectOffer(@PathVariable(value = "requestId") String requestId, @PathVariable(value = "offerId") String offerId, Principal principal, @Header("Authorization") String authentication){
+
+        return offersClient.rejectOffer(requestId, offerId, authentication); 
+    }
+    
+    @Secured({Roles.USER})
+    @Get("/requests/accept/{requestId}/{offerId}")
+    public Single<String> acceptOffer(@PathVariable(value = "requestId") String requestId, @PathVariable(value = "offerId") String offerId, @Header("Authorization") String authentication)
+    {
+        Single<String> acceptingOfferMessage =  offersClient.acceptOffer(requestId, offerId, authentication);
+
+        if(acceptingOfferMessage.blockingGet().toLowerCase().contains("success"))
+        {
+
+            return requestService.takeAction(requestId, RequestStatus.DONE); 
+        }
+        return Single.just("failed"); 
+    }
+}
+```
 
 ### Step 6 Gateway
 
-//Todo
-description
-setup
-configure Discovery
-configure routes
-JWT
+Gateway Service is the endpoint between the frontend application and the microservices. In microservice you can have multiple gateway services with different configurations and security rules based on application and the audiences of application. For example you can have a gateway service for admins and another gateway for different. In the gateway, you can configure routing, security, authorizations, ...etc. 
 
+For this application, we are using one [Netflix Zuul]((https://start.spring.io/#!type=gradle-project&language=java&platformVersion=2.2.0.RELEASE&packaging=jar&jvmVersion=1.8&groupId=io.hashimati&artifactId=gateway&name=gateway&description=Demo%20project%20for%20Spring%20Boot&packageName=io.hashimati.gateway&dependencies=cloud-zuul,oauth2-resource-server,cloud-eureka,cloud-starter-consul-discovery,thymeleaf) service instance as a gateway. Zuul service is a spring boot application. So, need to do the following configuration 
+1. Enable Zuul Proxy and Service Discovery Client 
+```java
+@EnableZuulProxy
+@EnableDiscoveryClient
+@SpringBootApplication
+@EnableHystrix
+@EnableCircuitBreaker
+public class GatewayApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(GatewayApplication.class, args);
+	}
+
+	@Bean
+	public MyZuulFilter myZuulFilter()
+	{
+		return new MyZuulFilter();
+	}
+}
+```
+2. Configura Service Port to 8080(default)
+```properties
+server.port=8080
+spring.application.name=Gateway
+```
+3. In the application.properties file, configure the routes for the microservices. You can use these two properties: 
+	A. zuul.routes."*".path. 
+	B. zuul.routes."*".serviceId.
+"*" refers to the root path of the service. So, the configurations is as following. The /login path is configured to appeared to the end user hosted in the gateway. 
+```properties
+zuul.routes.requests.path=/requests/**
+zuul.routes.requests.serviceId=request-services
+
+zuul.routes.offers.path=/offers/**
+zuul.routes.offers.serviceId=offers-services
+
+zuul.routes.uaa.path=/uaa/**
+zuul.routes.uaa.serviceId=users-services
+
+zuul.routes.login.path=/login
+zuul.routes.login.serviceId=users-services
+```
+3. Security Configuration: 
+First ensure to add Spring JWT, Oauth2 and Oauth2-autoconfiguration dependencies in the build file
+```build
+	// https://mvnrepository.com/artifact/org.springframework.security/spring-security-jwt
+compile group: 'org.springframework.security', name: 'spring-security-jwt', version: '1.0.10.RELEASE'
+
+// https://mvnrepository.com/artifact/org.springframework.security.oauth/spring-security-oauth2
+compile group: 'org.springframework.security.oauth', name: 'spring-security-oauth2', version: '2.3.6.RELEASE'
+
+// https://mvnrepository.com/artifact/org.springframework.security.oauth.boot/spring-security-oauth2-autoconfigure
+compile group: 'org.springframework.security.oauth.boot', name: 'spring-security-oauth2-autoconfigure', version: '2.1.9.RELEASE'
+```
+Then, add JWT key in the application.yml
+```yml
+security:
+  oauth2:
+    resource:
+      jwt:
+        key-value: pleaseChangeThisSecretForANewOne
+```
+Next, implement the resouce configuration to secure the endpoints. 
+```java
+Configuration
+ @EnableResourceServer
+public class ResourceConfiguration extends ResourceServerConfigurerAdapter
+{
+    @Override
+    public void configure(HttpSecurity http) throws Exception {
+        http.authorizeRequests()
+          .antMatchers("/uaa/**")
+          .permitAll()
+          .antMatchers("/login")
+          .permitAll()
+          .antMatchers("/**")
+      .authenticated();
+    }
+}
+```
+By defaut, Zuul will not allow the request Bearer token to pass and invoke the services of the microservices. The final step in security configuration is to remove this sensivity to enable the requests with "Authorization" in the header to pass from the gateway to microservice realem. Add the following lines to application.yml  
+```yml
+zuul:
+  sensitiveHeaders: Cookie,Set-Cookie
+  ignoredServices: '*'
+```
+4. Configure Eureka or Consule Client: 
+
+To configure Eureka server, use these properties: 
+```
+eureka.client.enabled=true
+eureka.client.service-url.defaultZone=http://localhost:8761/eureka
+```
+To configure Consul Server use these properties: 
+```
+spring.cloud.consul.host=localhost
+spring.cloud.consul.port=8500
+```
 ## Running Application
 1. Ensure MySql and MongoDB instances are installed, configured and run. 
 
