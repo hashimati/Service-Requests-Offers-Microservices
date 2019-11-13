@@ -285,7 +285,7 @@ public class AuthenticationProviderUserPassword implements AuthenticationProvide
     }
 }
 ```
-Then, we will exponse the users registration via /signup/{role} POST Endpoint.{role} is a path variable which holds either "user" or "service_provider". Therefore, the user's role will determented based on {role} value. The SignUp() method is annotated with  @Secured(SecurityRule.IS_ANONYMOUS) which mean it does not require users to be authenticated to consume it. The login and oauth endpoints are built-in in Micronaut-JWT which means that you can configure them in the applicaiton.yml file.
+Then, we will exponse the users registration via /signup/{role} POST Endpoint.{role} is a path variable which holds either "user" or "service_provider". Therefore, the user's role will determented based on {role} value. The SignUp() method is annotated with  @Secured(SecurityRule.IS_ANONYMOUS) which means it does not require users to be authenticated to consume it. The /login and /oauth endpoints are built-in in Micronaut-JWT which means that you can configure them in the applicaiton.yml file.
 
 ```java
  @Controller("/")
