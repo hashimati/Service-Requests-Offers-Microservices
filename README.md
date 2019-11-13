@@ -835,6 +835,8 @@ In OfferController.java, we will implement save() function which is storing offe
 1) offer: It the offer object. 
 2) token: it is the JWT Bearer token. The token should be passed into "authentication" attribue of the "requestsClient.findRequestsByNo()". The token will fetched from REST service endpoint. 
 
+
+![Image_diagram](https://github.com/hashimati/Service-Requests-Offers-Microservices/raw/master/submitting_offer.png)
 The implmenentation will be as following: 
 ```java
    public Single<Offer> save(Offer offer, String token){
