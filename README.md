@@ -921,7 +921,7 @@ public class RequestController {
 
 Gateway Service is the endpoint between the frontend application and the microservices. In microservice you can have multiple gateway services with different configurations and security rules based on application and the audiences of application. For example you can have a gateway service for admins and another gateway for different. In the gateway, you can configure routing, security, authorizations, ...etc. 
 
-For this application, we are using one [Netflix Zuul]((https://start.spring.io/#!type=gradle-project&language=java&platformVersion=2.2.0.RELEASE&packaging=jar&jvmVersion=1.8&groupId=io.hashimati&artifactId=gateway&name=gateway&description=Demo%20project%20for%20Spring%20Boot&packageName=io.hashimati.gateway&dependencies=cloud-zuul,oauth2-resource-server,cloud-eureka,cloud-starter-consul-discovery,thymeleaf) service instance as a gateway. Zuul service is a spring boot application. So, need to do the following configuration 
+For this application, we are using one [Netflix Zuul](https://start.spring.io/#!type=gradle-project&language=java&platformVersion=2.2.0.RELEASE&packaging=jar&jvmVersion=1.8&groupId=io.hashimati&artifactId=gateway&name=gateway&description=Demo%20project%20for%20Spring%20Boot&packageName=io.hashimati.gateway&dependencies=cloud-zuul,oauth2-resource-server,cloud-eureka,cloud-starter-consul-discovery,thymeleaf) service instance as a gateway. Zuul service is a spring boot application. So, need to do the following configuration 
 1. Enable Zuul Proxy and Service Discovery Client 
 ```java
 @EnableZuulProxy
