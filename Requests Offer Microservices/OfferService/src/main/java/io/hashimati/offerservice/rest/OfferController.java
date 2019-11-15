@@ -36,16 +36,16 @@ public class OfferController {
 
     @Secured({Roles.SERVICE_PROVIDER})
     @Post("/submit")
-    public Single<Offer> saveRequest(@Body Offer offer, Principal principal,  @Header("Authorization") String authentication)
+    public Single<Offer> saveRequest(@Body Offer offer, Principal principal,  @Header("Authorization") String authorization)
     {
         offer.setProviderName(principal.getName());   
-        return offerServices.save(offer, authentication);
+        return offerServices.save(offer, authorization);
     }
 
     @Secured({Roles.SERVICE_PROVIDER})
     @Get("/requests/get")
-    public Flowable<Request> findAll(@Header("Authorization") String authentication){
-        return requestsClient.findAll(authentication); 
+    public Flowable<Request> findAll(@Header("Authorization") String authorization){
+        return requestsClient.findAll(authorization); 
 
     }
 

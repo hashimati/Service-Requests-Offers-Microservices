@@ -81,16 +81,16 @@ public class RequestController {
  
     @Secured({Roles.USER})
     @Get("/requests/reject/{requestId}/{offerId}")
-    public Single<String> rejectOffer(@PathVariable(value = "requestId") String requestId, @PathVariable(value = "offerId") String offerId, Principal principal, @Header("Authorization") String authentication){
+    public Single<String> rejectOffer(@PathVariable(value = "requestId") String requestId, @PathVariable(value = "offerId") String offerId, Principal principal, @Header("Authorization") String authorization){
 
-        return offersClient.rejectOffer(requestId, offerId, authentication); 
+        return offersClient.rejectOffer(requestId, offerId, authorization); 
     }
     
     @Secured({Roles.USER})
     @Get("/requests/accept/{requestId}/{offerId}")
-    public Single<String> acceptOffer(@PathVariable(value = "requestId") String requestId, @PathVariable(value = "offerId") String offerId, @Header("Authorization") String authentication)
+    public Single<String> acceptOffer(@PathVariable(value = "requestId") String requestId, @PathVariable(value = "offerId") String offerId, @Header("Authorization") String authorization)
     {
-        Single<String> acceptingOfferMessage =  offersClient.acceptOffer(requestId, offerId, authentication);
+        Single<String> acceptingOfferMessage =  offersClient.acceptOffer(requestId, offerId, authorization);
 
         if(acceptingOfferMessage.blockingGet().toLowerCase().contains("success"))
         {
