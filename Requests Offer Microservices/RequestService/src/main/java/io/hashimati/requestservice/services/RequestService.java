@@ -1,5 +1,6 @@
 package io.hashimati.requestservice.services;
 
+import java.util.Date;
 import java.util.HashMap;
 
 import javax.inject.Singleton;
@@ -126,6 +127,7 @@ public class RequestService {
         Request request = findAsSingle(filter).blockingGet(); 
         //Single.fromPublisher(getCollection().find(filter).limit(1).first()).blockingGet(); 
         request.setStatus(done);
+        request.setLastUpdate(new Date());
 
 
 

@@ -1,5 +1,7 @@
 package io.hashimati.offerservice.services;
 
+import java.util.Date;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -103,6 +105,7 @@ public class OfferServices {
         
         Offer offer = findAsSingle(filter).blockingGet();
         offer.setStatus(offerStatus); 
+        offer.setLastUpdate(new Date()); 
         return Single.fromPublisher(getCollection().findOneAndReplace(filter, offer))
         .map(x->"Success")
         .onErrorReturnItem("failed");  
