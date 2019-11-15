@@ -805,8 +805,17 @@ Storing offer object will be explained in step 5. So, we will implement offers r
 ```
 ### Step 5: Interaction Between RequestsServcie and OffersService
 
-In the scope of the given requirment, the RequestsService and OffersServices are interacting and exchanging services in three functios: 
+In Java microservices development, the services are interacting between each via communication protocols. The common ways to achieve communitcations between services:
 
+1. Web Client
+2. TCP Client and EventBus which are commonly used in [Vertx](https://vertex.io) framework. 
+3. WebSocket 
+4. Reactive Stream Protocol like [RSocket](RSocket)
+5. RPC which is Remote Procedure Call like GRPC which is using Protobuff protocol or Java RMI. 
+
+We will use Web Client in this application to exchange information between services. Micronaut framework provides a client implemenation for web client and reactive streams which is enable developer to implement communtication in intuitive way.
+
+In the scope of the given requirment, the RequestsService and OffersServices are interacting and exchanging services in three functios: 
 1) Submiting offer. 
 2) Accepting Offer. 
 3) Rejecting Offer. 
@@ -822,9 +831,11 @@ In order to acheive this step, you need to create Request Service Client interfa
  @Client(id="request-services", path = "/api")
 public interface RequestsClient {
 
-    @Secured({Roles.SERVICE_PROVIDER, Roles.USER})
+   @Secured({Roles.SERVICE_PROVIDER, Roles.USER})
+    @CircuitBreaker(reset = "30s",attempts = "2")
     @Get("/requests/{requestId}")
-    public Single<Request> findRequestByNo(@PathVariable(value ="requestId" ) String requestNo, @Header("Authorization") String authentication);   
+    public Single<Request> findRequestByNo(@Pat		hVariable(value ="requestId" ) String requestNo, @Header("Authorization") String authorization); 
+   
     
 }
 ```
@@ -833,7 +844,7 @@ In the client interface, we define the 4 items to enable offer service to talk w
 2) @Secured: Put the roles of the users. 
 3) @Get: pass the path of the service. the "path" attribue in @Client and "value" in @Get combinded are the path of the REST findRequestNo(). 
 4) findRequestByNo(): findRequestByNo() signature should be identical to the signature of the findRequestByNo() in the RequestController.java. You can rename this function to any name. we use findRequestByNo() to be consistent with corrosponding one in RequestController.java in the RequestService. 
-5) @Header("Authorization") String authentication: In findRequestByNo() signature we add "authentication" parameter for security. In the "authentication" parameter, you should pass JWT Bearer token. In order to authorize the user to consume this service. This parameter isn't nessary to be in the corresponding function in the RequestController.java. 
+5) @Header("Authorization") String authentication: In findRequestByNo() signature we add "authorization" parameter for security. In the "authorization" parameter, you should pass JWT Bearer token. In order to authorize the user to consume this service. This parameter isn't nessary to be in the corresponding function in the RequestController.java. 
 
 In OfferController.java, we will implement save() function which is storing offers object to the MongoDB instance. The save() function has to parameters: 
 1) offer: It the offer object. 
@@ -867,19 +878,33 @@ The implmenentation is as following:
 
     }
 ```
+In the saving offer service endpoint implementation, we will capture the Service Profider name from name attribute of the Principle object and the token from "authorization" string parameter. The "authorization" pararameter is annotated with @Header and we passed header-name "Authorization" in order to capture JWT token in "authentication" parameter.
+```
+src\main\java\io\hashimati\offerservice\rest\OfferController.java
+```
+```java
+    Secured({Roles.SERVICE_PROVIDER})
+    @Post("/submit")
+    public Single<Offer> saveRequest(@Body Offer offer, Principal principal,  @Header("Authorization") String authorization)
+    {
+        offer.setProviderName(principal.getName());   
+        return offerServices.save(offer, authorization);
+    }
+```
+
 #### Accepting & Reject Offer
 
-The concept of implementing accepting and rejecting offer functions is the same as implmentation of the Saving offer function. Accepting and rejecting offer in this microserices archticture are handled via Requests Service. So, before taking the action, we need to implement OfferClient in RequestService application: 
-
+The concept of implementing accepting and rejecting offer functions is the same as implmentation of the Saving offer function. Accepting and rejecting offer in this microserices archticture are handled in Requests Service. So, before taking the action, we need to implement OfferClient in RequestService application: 
 ```java
 @Client(id="offers-services", path = "/api")
 public interface OffersClient {
 
+    CircuitBreaker(reset = "30s",attempts = "2")
     @Get("/offers/reject/{requestId}/{offerId}")
     public Single<String> rejectOffer(@PathVariable(name = "requestId") String requestId,
      @PathVariable(name = "offerId") String offerId, @Header("Authorization") String authentication);
 
-
+     @CircuitBreaker(reset = "30s",attempts = "2")
      @Get("/offers/accept/{requestId}/{offerId}")
 	public Single<String> acceptOffer(@PathVariable(name = "requestId") String requestId,
     @PathVariable(name = "offerId") String offerId, @Header("Authorization") String authentication);
