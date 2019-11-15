@@ -1027,7 +1027,7 @@ public class ResourceConfiguration extends ResourceServerConfigurerAdapter
     }
 }
 ```
-By defaut, Zuul will not allow the request Bearer token to pass and invoke the services of the microservices. The final step in security configuration is to remove this sensivity to enable the requests with "Authorization" in the header to pass from the gateway to microservice realem. Add the following lines to application.yml  
+By default, Zuul will not allow the request with Bearer token to pass and invoke any services in the microservices. The final step in security configuration is to remove this sensivity to enable the requests with "Authorization" in the header to pass from the gateway to microservice realem. Add the following lines to application.yml  
 ```yml
 zuul:
   sensitiveHeaders: Cookie,Set-Cookie
