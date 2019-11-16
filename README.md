@@ -17,8 +17,7 @@ Service Request-Offers Microservices is a simple microservices application using
   John wants to do a full maintenace for his apartment. He heared about an application Called "Request-Offer" app which will help him to find a maintenance with a good offer. John sends a request to "Request-Offer" service. On other hand, Mike is service provider. Mike sees John's offer. Mike sends a good offer to "Request-Offer" service with competitive price to meet John's request. John accepts Mike's offer among alot of other offers.
 
 ## Domains: 
-The services have 3 entities:
-
+According to the requirments story, the services have 3 domains that drive the development of the application:
 1. User: This entity represents the application users  user should be either requester and provider.
 2. Request: This entity represents the service request objects.
 3. Offer: This entity represents the offers objects.
@@ -74,6 +73,21 @@ Consul is a service discovery solution which is maintained by HashiCorp. You can
 ```shell
 > consul agent -data-dir=your-consul-data-file -dev -ui
 ```
+
+Each microservice should be configured with the discovery server information. The microservice will identified by application name in the client discovery server. The application name is configured in the application.yml or application.properties. In this microservices application, Micronaut based services will be running on random ports and Spring Eureka and Gateway will run on port 8761 and 8080 consecutively. 
+
+```
+
+```
+#####Micronaut
+```yml
+micronaut:
+  application:
+    name: RequestServices
+  server:
+    port: -1
+```
+
 
 ### Step 2: Users Service 
 Users Service is a user management and JWT propagation service. The service will provide basiclly user registration, authentication and authorization functions. The service will handle user objects and store them into MySQL instance. User POJO has three attributes of string data type which are username, password, and roles. The roles are represented as a string delimated by commas. The service will use Micronaut Data API to handle CRUD operations. 
