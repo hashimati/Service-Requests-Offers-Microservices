@@ -74,19 +74,14 @@ Consul is a service discovery solution which is maintained by HashiCorp. You can
 > consul agent -data-dir=your-consul-data-file -dev -ui
 ```
 
-Each microservice should be configured with the discovery server information. The microservice will identified by application name in the client discovery server. The application name is configured in the application.yml or application.properties. In this microservices application, Micronaut based services will be running on random ports and Spring Eureka and Gateway will run on port 8761 and 8080 consecutively. 
+Each microservice should be configured with the discovery server information. The microservice will identified by application name in the client discovery server. The application name is configured in the application.yml or application.properties. In this microservices application, Micronaut based services will be running on random ports and Spring Eureka and Gateway will run on port 8761 and 8080 consecutively. The below table shows the microserices instances details: 
 
-```
-
-```
-#####Micronaut
-```yml
-micronaut:
-  application:
-    name: RequestServices
-  server:
-    port: -1
-```
+| Service Applicaiton Name | Registration Name | Port | 
+| --- | --- | --- |
+| Gateway | GateWay | 8080 |
+| UsersService | users-service | 8888 |
+| OffersService | offers-service | random |
+| RequestsService | requests-service | random |
 
 
 ### Step 2: Users Service 
