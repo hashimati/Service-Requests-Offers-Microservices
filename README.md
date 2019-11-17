@@ -6,7 +6,7 @@ In a nutshell, Micronaut is a lightweight, JVM-based framework that's ahead of c
 
 
 Service Request-Offers Microservices is a simple microservices application using Micronaut framework. The application covers the following areas:
-1. Service Discovary using Netflix Eureka or Consul.
+1. Service Discovery using Netflix Eureka or Consul.
 2. Integration with Zuul Gateway.
 3. Securing Microservices with JWT.
 4. Using Micronaut Data with MySQL and Liquibase.
@@ -14,20 +14,20 @@ Service Request-Offers Microservices is a simple microservices application using
 
 ## Requirements Description (Story)
   
-  John wants to do a full maintenace for his apartment. He heared about an application Called "Request-Offer" app which will help him to find a maintenance with a good offer. John sends a request to "Request-Offer" service. On other hand, Mike is service provider. Mike sees John's offer. Mike sends a good offer to "Request-Offer" service with competitive price to meet John's request. John accepts Mike's offer among alot of other offers.
+ John wants to do full maintenance for his apartment. He heard about an application Called "Request-Offer" app which will help him to find maintenance with a good offer. John sends a request to the "Request-Offer" service. On the other hand, Mike is a service provider. Mike sees John's offer. Mike sends a good offer to the "Request-Offer" service at a competitive price to meet John's request. John accepts Mike's offer among a lot of other offers.
 
 ## Domains: 
-According to the requirments story, the services have 3 domains that drive the development of the application:
-1. User: This entity represents the application users  user should be either requester and provider.
+According to the requirements story, the services have 3 domains that drive the development of the application:
+1. User: This entity represents the application users. A user should be either a requester or a service provider.
 2. Request: This entity represents the service request objects.
-3. Offer: This entity represents the offers objects.
+3. Offer: This entity represents the offers of objects.
 
 ## Solution
 The solution consists of 5 services 
-1. [Eureka Server](https://start.spring.io/#!type=gradle-project&language=java&platformVersion=2.2.0.RELEASE&packaging=jar&jvmVersion=1.8&groupId=io.hashimati&artifactId=eureka&name=eureka&description=Demo%20project%20for%20Spring%20Boot&packageName=io.hashimati.eureka&dependencies=cloud-eureka) or [Consul](https://www.consul.io/downloads.html) Server: Service Discovery Server. 
-2. [UsersService](https://www.microstarter.io/?g=io.hashimati&artifact=UsersService&build=Gradle&language=Java&profile=service&port=8888&javaVersion=8&d=security-jwt,discovery-eureka,liquibase): It is an account management services. It provides registration, authentication and authorization services. Also, it propagate JWT tokens to RequestsService and OffersService. UserService stores users' data in MySQL instance and uses Micronaut Data Framework to handle the data. 
+1. [Eureka Server](https://start.spring.io/#!type=gradle-project&language=java&platformVersion=2.2.0.RELEASE&packaging=jar&jvmVersion=1.8&groupId=io.hashimati&artifactId=eureka&name=eureka&description=Demo%20project%20for%20Spring%20Boot&packageName=io.hashimati.eureka&dependencies=cloud-eureka) or [Consul](https://www.consul.io/downloads.html) Server: A Service Discovery Server. 
+2. [UsersService](https://www.microstarter.io/?g=io.hashimati&artifact=UsersService&build=Gradle&language=Java&profile=service&port=8888&javaVersion=8&d=security-jwt,discovery-eureka,liquibase): It is an account management service. It provides registration, authentication and authorization services. Also, it propagates JWT tokens to RequestsService and OffersService. UserService stores users' data in MySQL instance and uses the Micronaut Data Framework to handle the data.
 3.  [RequestsService](https://www.microstarter.io/?g=io.hashimati&artifact=RequestsService&build=Gradle&language=Java&profile=service&port=-1&javaVersion=8&d=discovery-eureka,security-jwt,mongo-reactive): This service produces all services which are related to requests. The service stores the requests in MongoDB instance. Also, it will consume the offers services as required.  
-4. [OffersService](https://www.microstarter.io/?g=io.hashimati&artifact=OffersService&build=Gradle&language=Java&profile=service&port=-1&javaVersion=8&d=discovery-eureka,security-jwt,mongo-reactive): This service produces all services which are related to offers. Offers objects will be stored in a MongoDB instance. OffersService invokes services from RequestsServices as required. 
+4. [OffersService](https://www.microstarter.io/?g=io.hashimati&artifact=OffersService&build=Gradle&language=Java&profile=service&port=-1&javaVersion=8&d=discovery-eureka,security-jwt,mongo-reactive): This service produces all services which are related to the offers. Offers objects will be stored in a MongoDB instance. The OfferService invokes services from RequestService as requires 
 5. [Gateway](https://start.spring.io/#!type=gradle-project&language=java&platformVersion=2.2.0.RELEASE&packaging=jar&jvmVersion=1.8&groupId=io.hashimati&artifactId=gateway&name=gateway&description=Demo%20project%20for%20Spring%20Boot&packageName=io.hashimati.gateway&dependencies=cloud-zuul,oauth2-resource-server,cloud-eureka,cloud-starter-consul-discovery,thymeleaf):  a Netfix Zuul gateway service. 
 
 ## Archeticture: 
@@ -36,10 +36,10 @@ The solution consists of 5 services
 
 ## Implementation
 ### Step 1: Service Discovery Server 
-Service Discovery Server is a namiong service for the services. Each service will register itself in the service discovery services. Therefore, the services will contact with each others by their name. Also, provide a services to inquiry about the availability of each services instances. In our application you can use Eureka or Consul as a service discovery server. 
+Service Discovery Server is a naming service for the services. Each service will register itself in the service discovery services. Therefore, the services will contact each other by their name. Also, provide services to inquire about the availability of the instances of each service. In our application, you can use Eureka or Consul as a service discovery server. 
 
 #### Netflix Eureka Service Discovery Server. 
-Eureka Service Discovery server is spring boot application which is usually listening on port 8761. To configure it, open application.properties file  and add the below configurations.  
+Eureka Service Discovery server is a spring boot application which is usually listening on port 8761. To configure it, add the below configurations to application.properties file and    
 ```
 src\main\resources\application.properties
 ```
@@ -48,7 +48,7 @@ server.port=8761
 eureka.client.register-with-eureka=false
 eureka.client.fetch-registry=false
 ```
-Then, annotate the main class with @EnableEurekaServer annotation. By these two steps, you did the basic configuration for Eureka Servcie Discovery Server. 
+Then, annotate the main class with @EnableEurekaServer annotation. With these steps, you made the basic Eureka Server configurations.
 ```
 src\main\java\io\hashimati\EurekaService\EurekaServiceApplication.java
 ```
@@ -69,12 +69,12 @@ public class EurekaServiceApplication {
 
 #### Using Consul
 
-Consul is a service discovery solution which is maintained by HashiCorp. You can use as a blackbox solution for discovery service. download the community edition. The create extract the executable file into your selected path. After that create a folder for servcie data in your file system in order to pass into running command. Consul service is listening by default on port 8500. To run Consul agent, use the below command: 
+Consul is a service discovery solution that is maintained by HashiCorp. You can use as a BlackBox solution for discovery service. download the community edition. The create extract the executable file into your selected path. After that create a folder for service data in your file system in order to pass into running command. Consul service is listening by default on port 8500. To run Consul agent, use the below command: 
 ```shell
 > consul agent -data-dir=your-consul-data-file -dev -ui
 ```
 
-Each microservice should be configured with the discovery server information. The microservice will identified by application name in the client discovery server. The application name is configured in the application.yml or application.properties. In this microservices application, Micronaut based services will be running on random ports and Spring Eureka and Gateway will run on port 8761 and 8080 consecutively. The below table shows the microserices instances details: 
+You need to configure the Client Discovery Server information in each microservice. Client discovery identifies each microservice with its application name.  In this microservices application, Micronaut based services are running on random ports. Spring Eureka and Gateway will run on port 8761 and 8080 consecutively. The below table shows the details of the microservices instance: 
 
 | Service Applicaiton Name | Registration Name | Port | 
 | --- | --- | --- |
@@ -85,14 +85,14 @@ Each microservice should be configured with the discovery server information. Th
 
 
 ### Step 2: Users Service 
-Users Service is a user management and JWT propagation service. The service will provide basiclly user registration, authentication and authorization functions. The service will handle user objects and store them into MySQL instance. User POJO has three attributes of string data type which are username, password, and roles. The roles are represented as a string delimated by commas. The service will use Micronaut Data API to handle CRUD operations. 
+The Users Service is user management and JWT propagation service. The service provides basically user registration, authentication and authorization functions. The service will handle user objects and store them into MySQL instance. User POJO has three attributes of string data type which are username, password, and roles. The roles are represented as a string delimited by commas. The service will use the Micronaut Data API to handle CRUD operations. 
 
-Use the below Micronaut Cli command to bootstrap [UsersService](https://www.microstarter.io/?g=io.hashimati&artifact=UsersService&build=Gradle&language=Java&profile=service&port=8888&javaVersion=8&d=security-jwt,discovery-eureka,liquibase) 
+Use the below Micronaut CLI command to bootstrap [UsersService](https://www.microstarter.io/?g=io.hashimati&artifact=UsersService&build=Gradle&language=Java&profile=service&port=8888&javaVersion=8&d=security-jwt,discovery-eureka,liquibase) 
 ```shell
 mn create-app io-hashimati-UsersService --profile service --lang java --build gradle --features security-jwt --features discovery-eureka --features liquibase 
 ```
 #### Creating User POJO
-As prerequisite, add Micronaut Data dependcies for JDBC and MySQL dependencies
+As a prerequisite, add Micronaut Data dependencies for JDBC and MySQL dependencies to the build file: 
 ```gradle
 annotationProcessor 'io.micronaut.data:micronaut-data-processor:1.0.0.M4'
 runtime 'io.micronaut.configuration:micronaut-jdbc-hikari'
@@ -102,7 +102,7 @@ compileOnly 'jakarta.persistence:jakarta.persistence-api:2.2.2'
 runtime "io.micronaut.configuration:micronaut-jdbc-tomcat"
 ```
 
-After adding the Micronaut Data dependencies, configure the database connection in application.yml file. The required configurations are 
+After adding the Micronaut Data dependencies, configure the database connection in the application.yml file. The required configurations are 
 
 | url | driverClassName | username | password | dialect |
 | --- | --- | --- | --- | --- |
@@ -139,7 +139,7 @@ public class User
     private String roles;
 }
 ```
-The User Pojo is mapped to a table in the database by using below statement. 
+The User POJO is mapped to a table in the database by using the below statement. 
 ```sql
 create table users (
     id BIGINT not NULL auto_increment,
@@ -150,7 +150,8 @@ create table users (
     constraint id_num unique (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 ```
-The CREATE TABLE statement can be run manually in the database or we can use frameworks like Flyway or Liquibase to execute it when we launch the service. This process is called database migration. The migration process could include schema creation and data migration. One advantage of using Liquibase or Flyway frameworks is to keep tracks of our schemas versions and to log the changes in well organized and structured table that data migration fromeworks provide. In this application, we will use Liquibase to create the Users table once the UsersService is run. Liquibase will look into the definitions files and it will execute the defined DDL and SQL statements before exposing the services. Liquibase uses XML files to manipulate database migration. In this application, we will do only table creation in three steps. The first step is to define create users schema in XML file. The file name should be in the following format virsion-filename.xml. So, the file name should be 01-create-users-schema.xml where "01" prefix indicates to the version of Users Table. Whenever you update the schema save the changes in a new file and increment the version prefix.   
+You can run the "CREATE TABLE" statement in the database or you can use frameworks like Flyway or Liquibase to execute it when you launch the service. This process is called database migration. The migration process includes schema creation and data migration. One advantage of using Liquibase or Flyway frameworks is to track the schemas versions and log the changes in a well organized and structured table. In this application, you will use Liquibase to create the Users table once you run the UsersService. Liquibase looks into the definitions files and executes the defined DDL and SQL statements. Liquibase uses XML files to manipulate database migration. In this application, you create the user table only in three steps. In the first step, you define create users' schema in an XML file. You should name the file in the following format version-filename.xml. So, make the file name "01-create-users-schema.xml" where the "01" prefix indicates the version of the Users Table. Whenever you update the schema save the changes in a new file and increment the version prefix.   
+
 ```
 src\main\resources\db\changelog\01-create-users-schema.xml
 ```
@@ -182,7 +183,7 @@ src\main\resources\db\changelog\01-create-users-schema.xml
   </changeSet>
 </databaseChangeLog>
 ```
-The second step, we will include Users schema creation in the liquibase changelog xml file. 
+In the second step, you will include Users schema creation in the liquibase changelog xml file. 
 ```
 src\main\resources\db\liquibase-changelog.xml
 ```
@@ -196,7 +197,7 @@ src\main\resources\db\liquibase-changelog.xml
   <include file="changelog/01-create-users-schema.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>
 ```
-The thrid step is the configuration of the change log file in application.yml file. 
+The third step is the configuration of the changelog file in the application.yml file. 
 ```
 src\main\resources\application.yml
 ```
@@ -206,8 +207,8 @@ liquibase:
     users:
       change-log: 'classpath:db/liquibase-changelog.xml'
 ```
+In the requirements, the user is either Service requester as "user" or Service provider as "service_provider". You need to declare the roles in Roles class. Then, create this class in Requests Service and Offers Services. 
 
-As mentioned in the requirement, the user could be Service requester as "user" or Service provider as "service_provider". So, we will declare these two roles as two constant attributes of type string under Roles.java class. The Roles Class will be replicated in Requests Service and Offers Services. 
 ```
 src\main\java\io\hashimati\usersservices\constants\Roles.java
 ```
@@ -218,7 +219,7 @@ public class Roles {
     
 }
 ```
-To handle User CRUD, we will define UserRepository interface. The UserRepsoitory should extend CrudRepository interface and annotated with @JdbcRepository annotation. Because the service is connected to MySQL instance, we will pass Dialect.MYSQL into dilect attribute of the @JdbcRepository   
+To handle User CRUD, you define the UserRepository interface. The UserRepsoitory extends the CrudRepository interface. Then, you need to annotate the UserRepository with @JdbcRepository annotation and pass Dialect.MYSQL into dialect attribute.   
 ```
 src\main\java\io\hashimati\usersservices\repository\UserRepository.java
 ```
@@ -235,15 +236,15 @@ public interface UserRepository extends CrudRepository<User, Long>
     public boolean existsByUsername(String username); 
 }
 ```
-In UserRepository, we defined two funcitons: findUserByUsername(String username) to retreive a particular user object by username and existsByUsername(String username) function which returns true if the user exist in the database or false if the user is not exist in the database. 
+In UserRepository,  you two functions: findUserByUsername(String username) to retrieve a particular user object by username and existsByUsername(String username) function which returns true if the user exists in the database or false if the user does not exist in the database. 
 
 #### Security Configuration
-Now, we are ready to work with security configuration. Micronaut has simplified the implementation of JWT authentication and authorization. To implement security we need to create your AuthenticationProvider class and configure JWT properties in application.yml file. Before these two steps, we need to encrypt the user's password before storing it into the database. To acheive this goal, we will use BCryptPasswordEncoder of spring-security-crypto API to encrypt and match passwords. 
+Now, you are ready to work with security configuration. The Micronaut simplifies the JWT implementation. To implement security, you need to create your AuthenticationProvider class and configure JWT properties in the application.yml file. Before these two steps, we need to encrypt the user's password before storing it into the database. To achieve this goal, we will use the BCryptPasswordEncoder of spring-security-crypto API to encrypt and match passwords. 
 ```build
 // https://mvnrepository.com/artifact/org.springframework.security/spring-security-crypto
 compile group: 'org.springframework.security', name: 'spring-security-crypto', version: '5.2.0.RELEASE'
 ```
-In BCPasswordEncoder class, we will define the BCryptPasswordEncoder bean. @Factory and @Prototype annotations are equivelant to @Configuraiton and @Bean annotations in Spring Boot. 
+In the BCPasswordEncoder class, we will define the BCryptPasswordEncoder bean. @Factory and @Prototype annotations are equivalent to @Configuraiton and @Bean annotations in Spring Boot. 
 ```
 src\main\java\io\hashimati\usersservices\security\BCPasswordEncoder.java
 ```
@@ -257,7 +258,7 @@ public class BCPasswordEncoder{
     }
 }
 ```
-Now, we can write the Authentication Provider class. The authentication provider class implements AuthenticationProvider interface. The implemenation requires overriding authenticate() method in which the users' credentials are validated. 
+Now, you can write the Authentication Provider class. The authentication provider class implements the AuthenticationProvider interface. The implementation requires an overriding authenticate() method in which the service validates the users' credentials. 
 
 ```java
 @Singleton
@@ -293,7 +294,8 @@ public class AuthenticationProviderUserPassword implements AuthenticationProvide
     }
 }
 ```
-Then, we will exponse the users registration via /signup/{role} POST Endpoint.{role} is a path variable which holds either "user" or "service_provider". Therefore, the user's role will determented based on {role} value. The SignUp() method is annotated with  @Secured(SecurityRule.IS_ANONYMOUS) which means it does not require users to be authenticated to consume it. The /login and /oauth endpoints are built-in in Micronaut-JWT which means that you can configure them in the applicaiton.yml file.
+Then, expose the users registration via /signup/{role} POST Endpoint.{role} is a path variable which holds either "user" or "service_provider". Therefore, the user's role will be determined based on {role} value. The SignUp() method is annotated with  @Secured(SecurityRule.IS_ANONYMOUS) which means it does not require users to be authenticated to consume it. The /login and /oAuth endpoints are built-in in the Micronaut-JWT which means that you can configure them in the applicaiton.yml file.
+
 
 ```java
  @Controller("/")
@@ -334,7 +336,7 @@ public class UserController {
     }
 }
 ```
-Finally, we will configure security and JWT properties in application.yml. 
+Finally, we will configure security and JWT properties in the application.yml. 
 ```
 src\main\resources\application.yml
 ```
@@ -365,17 +367,17 @@ micronaut:
 ```
 1) Enabling The security
 2) To enable login endpoint
-3) To enable oauth endpoint
+3) To enable OAuth endpoint
 4) to enable JWT token
-5) to provide the secret in the configuration which the sevice uses to generate the token. 
-6) To enable header. 
+5) to provide the secret in the configuration which the service uses to generate the token. 
+6) To enable the header. 
 7) To specify the header name. 
 8) To specify the prefix of the authentication. 
 9) To enable propagation 
 10) To provide the services ids to which the UsersService will propagate the JWT secret. 
 
 #### Service Discovery Client Configuration: 
-If you want to use Netfilx Eureka Discovery add Eureka configuration, add Eureka client configurations to application.yml file
+If you want to use Netflix Eureka Discovery add Eureka configuration, add Eureka client configurations to the application.yml file
 ```
 src\main\resources\application.yml
 ```
@@ -387,7 +389,7 @@ src\main\resources\application.yml
        enabled: true
      defaultZone: "${EUREKA_HOST:localhost}:${EUREKA_PORT:8761}"
 ```
-But if you prefer to use Consul, add Consul client configuraiton instead of Eureka client configurations. 
+But if you prefer to use Consul, add Consul client configuration instead of Eureka client configurations. 
 ```yml
 consul:
   client:
@@ -395,10 +397,10 @@ consul:
       enabled: true
     defaultZone: "${CONSUL_HOST:localhost}:${CONSUL_PORT:8500}"
 ```
-The Service Discovery client configurations are common in UsersService, RequestsService, and OffersService. 
+The Service Discovery client configurations are mutual in UsersService, RequestsService, and OffersService. 
 
 ### Step 3: Requests Service 
-Requests Service is a Microservice which produces Requests related services. This services is Micronaut service. To bootstrap [RequestsService](https://www.microstarter.io/?g=io.hashimati&artifact=RequestsService&build=Gradle&language=Java&profile=service&port=-1&javaVersion=8&d=discovery-eureka,security-jwt,mongo-reactive) run this Micronaut Cli command: 
+Requests Service is a Microservice which produces Requests related services. This service is a Micronaut service. To bootstrap [RequestsService](https://www.microstarter.io/?g=io.hashimati&artifact=RequestsService&build=Gradle&language=Java&profile=service&port=-1&javaVersion=8&d=discovery-eureka,security-jwt,mongo-reactive) run this Micronaut Cli command: 
 ```shell
 > mn create-app io-hashimati-RequestsService --profile service --lang java --build gradle --features discovery-eureka --features security-jwt --features mongo-reactive 
 ```
@@ -418,7 +420,7 @@ micronaut:
 ```
 
 #### Requests Service Implemenation. 
-In this service will define Service Request Pojo and Offer classes. These two classes will be defined in both Requests service and Offer services. Both requests and offers objects are stored in MongoDB instance. We will define the Request Pojo as follwoing
+In this service, you need to define Service Request and Offer POJO. You will use MongoDB instance to store their objects. You declare the Request POJO as following
 
 
 ```java 
@@ -445,7 +447,7 @@ public class Request {
     
 }
 ```
-The Request object has three possible statuses: INITIATED, DONE, and CANCELED. The "location" attribute in the Request class will be used to by Service Provider users to find requests near to them using MongoDB Geospecial features. In this artical, we will not talk about this feature but you can review the implementation in the source code repository.
+The Request object has three possible statuses: INITIATED, DONE and CANCELED. The "location" attribute in the Request class will be used by Service Provider users to find requests near to them using MongoDB Geo special features. In this article, we will not talk about this feature but you can review the implementation in the source code repository.
 
 ```
 src\main\java\io\hashimati\requestservice\domains\enums\RequestStatus.java
@@ -509,7 +511,7 @@ public enum OfferStatus {
     ACCEPTED, REJECTED, SENT;
 }
 ```
-Based on Request class, we will implement two classes.The fiest one is RequestService to handle the requests object. The second class is RequestController which exposes the REST servies that are related to Requests objects. Before starting the implemenation of the RequestsServices class, we need to configure MongoDB instance's URI in application.yml file. The MongoDB instance is lestining on port 27017. These are the database information
+Based on the Request class, you will implement two classes. The first one is RequestService to handle the requests object. The second class is RequestController which exposes the REST services that are related to Requests objects. Before starting the implementation of the RequestsServices class, configure MongoDB instance's URI in the application.yml file. The MongoDB instance is listening on port 27017. These are the database information
 
 | host | Port | Database Name | Request Collection | Offer Collection |
 | --- | --- | --- | --- | --- |
@@ -525,11 +527,11 @@ mongodb:
   uri: "mongodb://${MONGO_HOST:localhost}:${MONGO_PORT:27017}"
 ```
 
-Now, we can start to write RequestService class. First, we will do the following steps: 
+Now, you can write the RequestService class. First, we will do the following steps: 
 1) Inject mongoClient bean. 
 2) Implement getCollection() function which returns "requests" collection. 
-3) Implement findAsSingle() function which takes MongoDB query as BsonDocument object and returns Single<Request> object or nothing. This method will be used whenever we want to retreive on Request object.
-4) Implement findAsSingle() function which takes MongoDB query as BsonDocument object and returns stream of Request objects. This method will be invoked whenever we want to retreive a stream of Request objects. 
+3) Implement findAsSingle() function which takes MongoDB query as BsonDocument object and returns Single<Request> object or nothing. This method will be used whenever we want to retrieve on the Request object.
+4) Implement findAsSingle() function which takes MongoDB query as BsonDocument object and returns stream of Request objects. This method will be invoked whenever we want to retrieve a stream of Request objects. 
 
 ```java 
 @Singleton
@@ -562,7 +564,7 @@ public class RequestService {
     ...
 }
 ```
-In RequestService, save() function will store Request object into requests collection. Each request should have unique ID. So the easy way to create unique is use this format username_incrementalNo. So, whenver, whenever the method receives new Request object from as specific user, it will count the requests of that user. Next, it will add one to the counting result. Then, it will set the request ID based on that format and the request's status to INITIATED which mean that the system receives the request. The method basically will reteive Single<Request> object with new ID. 
+In RequestService, save() function stores Request object into requests collection. Each request should have a unique ID. So the easy way to create unique is to use this format username_incrementalNo. So, whenever, whenever the method receives a new Request object from a specific user, it will count the requests of that user. Next, it will add one to the counting result. Then, it will set the request ID based on that format and the request's status to INITIATED which means that the system receives the request. The method returns Single<Request> object with a new ID. 
 
 ```java
 @Singleton
@@ -623,7 +625,7 @@ public class RequestService {
 ...
 }  
 ```
-In the RequestsService class, there is takeAction(String requestId, RequestStatus done) function. this function will be used to change status of the of the request. 
+In the RequestsService class, there is takeAction() function. this function will be used to change the status of the request. 
 
 ```java 
 	public Single<String> takeAction(String requestId, RequestStatus done){
@@ -637,10 +639,11 @@ In the RequestsService class, there is takeAction(String requestId, RequestStatu
 	}
 
 ```
-Finally, all the function in the RequestService class will be exposed in RequestController class. The RequestController class is injected with two beans: 
+Finally, configure the endpoints in the RequestController class. In the RequestController class, injected the following beans: 
 1) RequestService: To expose RequestService's functions.
-2) offersClient: offerClient will be explained in Step 5. 
-3) The below table explains the most important endpoints for the requirements scope. 
+2) OffersClient: You will learn about OfferClient in Step 5. 
+
+The below table explains the most important endpoints for the scope of the requirements. 
 
 | Function | Route | Method | Description | Role |
 | --- | --- | --- | --- | --- |
@@ -713,22 +716,22 @@ public class RequestController {
  
 }
 ```
-As shown, we used @Secured annotation to secure the endpoint and to control the resource authorization. rejectOffer() and acceptOffer() methods will be explained in step 5. 
+As shown, You can use @Secured annotation to secure the endpoint and to control the resource authorization. rejectOffer() and acceptOffer() methods will be explained in step 5. 
 
 ### Step 4: Offers Service
 
-Offers Service is a Micronaut service produces services related to the Offer objects. before starting the implemenation of the Offer object configure service discovery client, Mongodb configuration and JWT propagation validation. Also add the Request, Offer, Location, RequestStatus, OfferStatus, and Roles classes which are already explained previously. To bootstrap OfferService, use this Micronaut Cli command: 
+Offers Service is a Micronaut service that produces services related to the Offer objects. before starting the implementation of the Offer object configure service discovery client, Mongodb configuration and JWT propagation validation. Also add the Request, Offer, Location, RequestStatus, OfferStatus, and Roles classes which are already explained previously. To bootstrap OfferService, use this Micronaut CLI command: 
 
 ```shell
 ```
 
-The main domain which drives this service is Offer. So, it's required to create OfferService and OfferController classes. So, we will create an OfferService class. The OfferService class handle Offer objects CRUD functions. Initially, we will the follwoing in OfferService: 
+The main domain which drives this service is Offer. So, it's required to create OfferService and OfferController classes. So, we will create an OfferService class. The OfferService class handles Offer objects CRUD functions. Initially, you will do the following in OfferService:
 
 1) Inject MongoClient bean. 
 2) Inject a requestClient bean. the requestClient bean calls services from RequestsService. 
-3) Create getCollection() method to retrieve "offers" collectons from mongoClient bean. 
-4) Implement findAsSingle() function which takes MongoDB query as BsonDocument object and returns Single<Offer> object or nothing. This method will be used whenever we want to retreive on Offer object.
-5) Implement findAsSingle() function which takes MongoDB query as BsonDocument object and returns stream of Offer objects. This method will be invoked whenever we want to retreive a stream of Offer objects. 
+3) Create getCollection() method to retrieve "offers" collections from mongoClient bean. 
+4) Implement findAsSingle() function which takes MongoDB query as BsonDocument object and returns Single<Offer> object or nothing. This method will be used whenever we want to retrieve on Offer object.
+5) Implement findAsSingle() function which takes MongoDB query as BsonDocument object and returns stream of Offer objects. This method will be invoked whenever we want to retrieve a stream of Offer objects. 
 	
 ```java 
 @Singleton
@@ -765,7 +768,7 @@ public class OfferServices {
 ...
 }
 ```
-Storing offer object will be explained in step 5. So, we will implement offers retreival functions. As per the scope of the requirements, we need to implement these  functions: 
+Storing offer objects will be explained in step 5. So, we will implement offers retrieval functions. As per the scope of the requirements, we need to implement these  functions: 
 
 | Function | Description |
 | --- | --- | 
@@ -816,27 +819,27 @@ Storing offer object will be explained in step 5. So, we will implement offers r
 ```
 ### Step 5: Interaction Between RequestsServcie and OffersService
 
-In Java microservices development, the services are interacting between each via communication protocols. The common ways to achieve communitcations between services:
+In Java microservices development, the services are interacting between each via communication protocols. The common ways to achieve communications between services:
 
 1. Web Client
 2. TCP Client and EventBus which are commonly used in [Vertx](https://vertex.io) framework. 
 3. WebSocket 
 4. Reactive Stream Protocol like [RSocket](RSocket)
-5. RPC which is Remote Procedure Call like GRPC which is using Protobuff protocol or Java RMI. 
+5. RPC: it is a Remote Procedure Call like GRPC which is using Protobuff protocol or Java RMI. 
 
-We will use Web Client in this application to exchange information between services. Micronaut framework provides a client implemenation for web client and reactive streams which is enable developer to implement communtication in intuitive way.
+You will use Web Client in this application to exchange information between services. Micronaut framework provides a client implementation for web client and reactive streams which enable the developer to implement communication intuitively.
 
-In the scope of the given requirment, the RequestsService and OffersServices are interacting and exchanging services in three functios: 
-1) Submiting offer. 
-2) Accepting Offer. 
-3) Rejecting Offer. 
+In the scope of the given requirement, the RequestsService and OffersServices are interacting and exchanging services in three functions: 
+1) Submitting offers. 
+2) Accepting offers. 
+3) Rejecting offers. 
 
-#### Submitting Offer
-Submitting offer REST service is produced by Offers Service. Once the service provider user sumbits an order, the system should check the status of the service request beforing storing the offer in the database. The system should link the offer to INITIATED service request only. So, the offers service will ask the requests service for service request status. 
+#### Submitting Offers
+Submitting offers REST service is produced by Offers Service. Once the service provider user submits an order, the system should check the status of the service request before storing the offer in the database. The system should link the offer to the INITIATED service request only. So, the service of the offer asks the Request Service for the request status. 
 
 ![Image_diagram](https://github.com/hashimati/Service-Requests-Offers-Microservices/raw/master/submitting_offer.png)
 
-In order to acheive this step, you need to create Request Service Client interface. The client interface is annotated with @Client annotation. In the client annoation, you should pass the requests service name. The RequestClient is defined as following: 
+To achieve this step, you need to create the Request Service Client interface. Use @Client annotation with the client interface. In the client annotation, you should pass the requests service name. The RequestClient is defined as follows: 
 
 ```java
  @Client(id="request-services", path = "/api")
@@ -853,17 +856,17 @@ public interface RequestsClient {
 In the client interface, we define the 4 items to enable offer service to talk with request service. 
 1) @Client: In this annotation, passed service name "request-services" in the "id" attribute and root path of findRequestByNo() function which is "/api". 
 2) @Secured: Put the roles of the users. 
-3) @Get: pass the path of the service. the "path" attribue in @Client and "value" in @Get combinded are the path of the REST findRequestNo(). 
-4) findRequestByNo(): findRequestByNo() signature should be identical to the signature of the findRequestByNo() in the RequestController.java. You can rename this function to any name. we use findRequestByNo() to be consistent with corrosponding one in RequestController.java in the RequestService. 
-5) @Header("Authorization") String authentication: In findRequestByNo() signature we add "authorization" parameter for security. In the "authorization" parameter, you should pass JWT Bearer token. In order to authorize the user to consume this service. This parameter isn't nessary to be in the corresponding function in the RequestController.java. 
+3) @Get: pass the path of the service. the "path" attribute in @Client and "value" in @Get combined are the path of the REST findRequestNo(). 
+4) findRequestByNo(): findRequestByNo() signature should be identical to the signature of the findRequestByNo() in the RequestController.java. You can rename this function to any name. we use findRequestByNo() to be consistent with the corresponding one in RequestController.java in the RequestService. 
+5) @Header("Authorization") String authentication: In findRequestByNo() signature we add "authorization" parameter for security. In the "authorization" parameter, you should pass JWT Bearer token. In order to authorize the user to consume this service. This parameter isn't necessary to be in the corresponding function in the RequestController.java. 
 
-In OfferController.java, we will implement save() function which is storing offers object to the MongoDB instance. The save() function has to parameters: 
+In OfferController.java, we will implement save() function which is storing offers objects to the MongoDB instance. The save() function has to parameters: 
 1) offer: It the offer object. 
-2) token: it is the JWT Bearer token. The token should be passed into "authentication" attribue of the "requestsClient.findRequestsByNo()". The token will fetched from REST service endpoint. 
+2) token: it is the JWT Bearer token. The token should be passed into "authentication" attribute of the "requestsClient.findRequestsByNo()". The token will be fetched from a REST service endpoint. 
 
 
 
-The implmenentation is as following: 
+The implementation is as follows: 
 ```java
    public Single<Offer> save(Offer offer, String token){
         
@@ -889,7 +892,7 @@ The implmenentation is as following:
 
     }
 ```
-In the saving offer service endpoint implementation, we will capture the Service Profider name from name attribute of the Principle object and the token from "authorization" string parameter. The "authorization" pararameter is annotated with @Header and we passed header-name "Authorization" in order to capture JWT token in "authentication" parameter.
+In the saving offer service endpoint implementation, we will capture the Service Provider name from the name attribute of the Principle object and the token from the "authorization" string parameter. The "authorization" parameter is annotated with @Header and we passed header-name "Authorization" to capture JWT token in "authorization" parameter.
 ```
 src\main\java\io\hashimati\offerservice\rest\OfferController.java
 ```
@@ -905,7 +908,7 @@ src\main\java\io\hashimati\offerservice\rest\OfferController.java
 
 #### Accepting & Reject Offer
 
-The concept of implementing accepting and rejecting offer functions is the same as implmentation of the Saving offer function. Accepting and rejecting offer in this microserices archticture are handled in Requests Service. So, before taking the action, we need to implement OfferClient in RequestService application: 
+The concept of implementing accepting and rejecting offer functions is the same as the implementation of the Saving offer function. Accepting and rejecting an offer in this microservices architecture is handled in Requests Service. So, before taking the action, we need to implement OfferClient in RequestService application: 
 ```java
 @Client(id="offers-services", path = "/api")
 public interface OffersClient {
@@ -955,9 +958,9 @@ public class RequestController {
 
 ### Step 6 Gateway
 
-Gateway Service is the endpoint between the frontend application and the microservices. In microservice you can have multiple gateway services with different configurations and security rules based on application and the audiences of application. For example you can have a gateway service for admins and another gateway for different. In the gateway, you can configure routing, security, authorizations, ...etc. 
+Gateway Service is the endpoint between the frontend application and the microservices. In the microservices implementation, you can have multiple gateway services with different configurations and security rules based on application and the audiences of application. For example, you can have a gateway service for admins and another gateway for different. In the gateway, you can configure routing, security, authorizations, ...etc. 
 
-For this application, we are using one [Netflix Zuul](https://start.spring.io/#!type=gradle-project&language=java&platformVersion=2.2.0.RELEASE&packaging=jar&jvmVersion=1.8&groupId=io.hashimati&artifactId=gateway&name=gateway&description=Demo%20project%20for%20Spring%20Boot&packageName=io.hashimati.gateway&dependencies=cloud-zuul,oauth2-resource-server,cloud-eureka,cloud-starter-consul-discovery,thymeleaf) service instance as a gateway. Zuul service is a spring boot application. So, need to do the following configuration 
+For this application, you will use [Netflix Zuul](https://start.spring.io/#!type=gradle-project&language=java&platformVersion=2.2.0.RELEASE&packaging=jar&jvmVersion=1.8&groupId=io.hashimati&artifactId=gateway&name=gateway&description=Demo%20project%20for%20Spring%20Boot&packageName=io.hashimati.gateway&dependencies=cloud-zuul,oauth2-resource-server,cloud-eureka,cloud-starter-consul-discovery,thymeleaf) service instance as a gateway. Zuul service is a spring boot application. So, you need to do the following configuration 
 1. Enable Zuul Proxy and Service Discovery Client 
 ```java
 @EnableZuulProxy
@@ -978,15 +981,15 @@ public class GatewayApplication {
 	}
 }
 ```
-2. Configura Service Port to 8080(default)
+2. Configure Service Port to 8080(default)
 ```properties
 server.port=8080
 spring.application.name=Gateway
 ```
 3. In the application.properties file, configure the routes for the microservices. You can use these two properties: 
-	A. zuul.routes."*".path. 
-	B. zuul.routes."*".serviceId.
-"*" refers to the root path of the service. So, the configurations is as following. The /login path is configured to appeared to the end user hosted in the gateway. 
+    A. zuul.routes."*".path. 
+    B. zuul.routes."*".serviceId.
+"*" refers to the root path of the service. So, the configurations are as follows. The /login path is configured to appear to the end-user as hosted in the gateway. 
 ```properties
 zuul.routes.requests.path=/requests/**
 zuul.routes.requests.serviceId=request-services
@@ -1020,7 +1023,7 @@ security:
       jwt:
         key-value: pleaseChangeThisSecretForANewOne
 ```
-Next, implement the resouce configuration class to the endpoints' security configurations.
+Next, implement the resource configuration class to the endpoints' security configurations.
 ```java
 Configuration
  @EnableResourceServer
@@ -1038,7 +1041,7 @@ public class ResourceConfiguration extends ResourceServerConfigurerAdapter
     }
 }
 ```
-By default, Zuul will not allow the request with Bearer token to pass and invoke any services in the microservices. The final step in security configuration is to remove this sensivity to enable the requests with "Authorization" in the header to pass from the gateway to microservice realem. Add the following lines to application.yml  
+By default, Zuul will not allow the request with Bearer token to pass and invoke any services in the microservices. The final step in security configuration is to remove this sensitivity to enable the requests with "Authorization" in the header to pass from the gateway to the microservices realm. Add the following lines to application.yml.
 ```yml
 zuul:
   sensitiveHeaders: Cookie,Set-Cookie
@@ -1057,14 +1060,14 @@ spring.cloud.consul.host=localhost
 spring.cloud.consul.port=8500
 ```
 ## Running Application
-1. Ensure MySql and MongoDB instances are installed, configured and run. 
+1. Ensure MySql and MongoDB instance is installed, configured and run. 
 
-2. Create new database in the MySQL instance with name "helloworlddb": 
+2. Create a new database in the MySQL instance with name "helloworlddb": 
 ```sql
 CREATE DATABASE helloworlddb
 ```
 
-3. Start Discovry Server (Consul or Eureka):
+3. Start Discovery Server (Consul or Eureka):
 
 To start Consul, run this command:
 ```shell
@@ -1105,8 +1108,8 @@ curl -X POST --header "Authorization: Bearer jwtToken"  --data "x=sadfj&y=slkdfj
 
 ## Conclusion
 
-Microservices development is a big topic. This article covers the basic fundemintals of Microservices by implementing the scope of the requirments story only. There are many concepts which you need to consider when you develop Microservices Applicaitons: 
-1. Load Blancing. 
+Microservices development is a big topic. This article covers the fundamentals of Microservices development in the Micronaut frameworks by implementing the scope of the requirements story only. There are many concepts which you need to consider when you develop Microservices Applications: 
+1. Load Balancing. 
 2. Circuit Breaker. 
 3. Distributed Tracing. 
 4. Errors Handling. 
@@ -1117,13 +1120,13 @@ Microservices development is a big topic. This article covers the basic fundemin
 
 There are many requirements scopes and services can be added this application to make it production-ready service like:
 
-1. Re-implemenation some functions with best prictices. For example, in users-services, Roles variable of the Users object should be of Type Array. This requires to reimplement many classes and functions. Also, the user registration workflow.  
-2. Users profiles implemenation. 
+1. Re-implementation of some functions with best practices. For example, in users-services, the Roles variable of the Users object should be of Type Array. This requires to reimplement many classes and functions. Also, the user registration workflow.  
+2. Users' profiles implementation. 
 3. The rest functions of requests and offers services. 
 4. Billing Service.
 ... etc. 
 
-I'll try to cover more microservices topics based on this microservices applicaton.
+I'll try to cover more microservices topics based on this microservices application.
 
 Thanks a lot for reading and Happy Coding, 
 
