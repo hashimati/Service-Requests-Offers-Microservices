@@ -1104,3 +1104,27 @@ curl -X POST --header "Authorization: Bearer jwtToken"  --data "x=sadfj&y=slkdfj
 7. Accepting Offer: 
 
 ## Conclusion
+
+Microservices development is a big topic. This article covers the basic fundemintals of Microservices by implementing the scope of the requirments story only. There are many concepts which you need to consider when you develop Microservices Applicaitons: 
+1. Load Blancing. 
+2. Circuit Breaker. 
+3. Distributed Tracing. 
+4. Errors Handling. 
+5. RPC
+6. Event-Driven
+7. Hosting 
+9. and more...
+
+There are many requirements scopes and services can be added this application to make it production-ready service like:
+
+1. Re-implemenation some functions with best prictices. For example, in users-services, Roles variable of the Users object should be of Type Array. This requires to reimplement many classes and functions. Also, the user registration workflow.  
+2. Users profiles implemenation. 
+3. The rest functions of requests and offers services. 
+4. Billing Service.
+... etc. 
+
+I'll try to cover more microservices topics based on this microservices applicaton.
+
+Thanks a lot for reading and Happy Coding, 
+
+Ahmed.
