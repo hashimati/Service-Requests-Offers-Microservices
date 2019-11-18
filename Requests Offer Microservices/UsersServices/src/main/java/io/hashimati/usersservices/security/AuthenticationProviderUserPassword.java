@@ -1,13 +1,12 @@
-package io.hashimati.usersservices.security; 
+package io.hashimati.usersservices.security;
 
 import java.util.Arrays;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jasypt.util.password.StrongPasswordEncryptor;
 import org.reactivestreams.Publisher;
-import org.springframework.security.crypto.password.PasswordEncoder;
-
 import io.hashimati.usersservices.domains.User;
 import io.hashimati.usersservices.repository.UserRepository;
 import io.micronaut.security.authentication.AuthenticationFailed;
@@ -29,8 +28,10 @@ public class AuthenticationProviderUserPassword implements AuthenticationProvide
     @Inject
     private UserRepository userRepository;
 
-    @Inject 
-    private PasswordEncoder PasswordEncoder; 
+    // @Inject 
+   
+    @Inject
+    private StrongPasswordEncryptor strongPasswordEncryptor ;
 
 
     @Override
@@ -46,7 +47,7 @@ public class AuthenticationProviderUserPassword implements AuthenticationProvide
         User user = userRepository.findUserByUsername(authenticationRequest.getIdentity().toString());  
         
     
-        if ( PasswordEncoder.matches(authenticationRequest.getSecret().toString(), user.getPassword())) {
+        if ( strongPasswordEncryptor.checkPassword(authenticationRequest.getSecret().toString(), user.getPassword())) {
             return Flowable.just(new UserDetails(user.getUsername(),
                     Arrays.asList(user.getRoles()
                             .replace(" ", "")

@@ -7,10 +7,12 @@ package io.hashimati.usersservices.rest;
 
 import javax.inject.Inject;
 
+import org.jasypt.util.password.StrongPasswordEncryptor;
+
 import io.hashimati.usersservices.constants.Roles;
 import io.hashimati.usersservices.domains.User;
 import io.hashimati.usersservices.repository.UserRepository;
-import org.springframework.security.crypto.password.PasswordEncoder; 
+
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.PathVariable;
@@ -30,7 +32,7 @@ public class UserController {
     UserRepository userRepository; 
     
     @Inject
-    private PasswordEncoder passwordEncoder; 
+    private StrongPasswordEncryptor strongPasswordEncryptor; 
 
     @Secured(SecurityRule.IS_ANONYMOUS)
     @Post("/signup/{role}")
@@ -39,7 +41,7 @@ public class UserController {
         if(role.equals(Roles.USER) || role.equals(Roles.SERVICE_PROVIDER))  
         {
             user.setRoles(role);
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            user.setPassword(strongPasswordEncryptor.encryptPassword(user.getPassword()));
             try{
                 if(!userRepository.existsByUsername(user.getUsername()))
                  {
