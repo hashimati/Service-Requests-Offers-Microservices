@@ -239,23 +239,23 @@ public interface UserRepository extends CrudRepository<User, Long>
 In UserRepository,  you two functions: findUserByUsername(String username) to retrieve a particular user object by username and existsByUsername(String username) function which returns true if the user exists in the database or false if the user does not exist in the database. 
 
 #### Security Configuration
-Now, you are ready to work with security configuration. The Micronaut simplifies the JWT implementation. To implement security, you need to create your AuthenticationProvider class and configure JWT properties in the application.yml file. Before these two steps, we need to encrypt the user's password before storing it into the database. To achieve this goal, we will use the BCryptPasswordEncoder of spring-security-crypto API to encrypt and match passwords. 
+Now, you are ready to work with security configuration. The Micronaut simplifies the JWT implementation. To implement security, you need to create your AuthenticationProvider class and configure JWT properties in the application.yml file. Before these two steps, we need to encrypt the user's password before storing it into the database. To achieve this goal, you will use the Jasypt to encrypt and match passwords.
 ```build
 // https://mvnrepository.com/artifact/org.springframework.security/spring-security-crypto
 compile group: 'org.springframework.security', name: 'spring-security-crypto', version: '5.2.0.RELEASE'
+
 ```
-In the BCPasswordEncoder class, we will define the BCryptPasswordEncoder bean. @Factory and @Prototype annotations are equivalent to @Configuraiton and @Bean annotations in Spring Boot. 
+In the PasswordEncoder class, you will define the StrongPasswordEncryptor bean. @Factory and @Prototype annotations are equivalent to @Configuraiton and @Bean annotations in Spring Boot.
 ```
 src\main\java\io\hashimati\usersservices\security\BCPasswordEncoder.java
 ```
 ```java
-@Factory
-public class BCPasswordEncoder{    
+@Factory 
+public class PasswordEncoder  {
     @Prototype
-    public PasswordEncoder passwordEncoder(){
-
-        return new BCryptPasswordEncoder();
-    }
+    public StrongPasswordEncryptor strongPasswordEncryptor(){
+        return new StrongPasswordEncryptor(); 
+    }  
 }
 ```
 Now, you can write the Authentication Provider class. The authentication provider class implements the AuthenticationProvider interface. The implementation requires an overriding authenticate() method in which the service validates the users' credentials. 
