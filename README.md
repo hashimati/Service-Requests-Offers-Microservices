@@ -1118,6 +1118,43 @@ To be provided
 ```
 To be provided
 ```
+```http
+
+###
+#Register John as user.
+POST http://localhost:8080/uaa/signup/user
+Content-Type: application/json
+
+{"username":  "John", "password": "hello123"}
+
+###
+#Register Mike as Service_provider.
+POST http://localhost:8080/uaa/signup/user
+Content-Type: application/json
+
+{"username":  "Mike", "password": "hello123"}
+
+###
+POST http://localhost:8888/login
+Content-Type: application/json
+
+{
+  "username": "John",
+  "password": "hello123"
+}
+
+###
+POST http://localhost:8888/login
+Content-Type: application/json
+
+{
+  "username": "Mike",
+  "password": "hello123"
+}
+
+###
+
+```
 ## Conclusion
 
 Microservices development is a big topic. This article covers the fundamentals of Microservices development in the Micronaut frameworks by implementing the scope of the requirements story only. There are many concepts which you need to consider when you develop Microservices Applications: 
