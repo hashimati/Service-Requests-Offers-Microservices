@@ -1121,11 +1121,15 @@ To be provided
 ```http
 
 ###
+
+###
 #Register John as user.
 POST http://localhost:8080/uaa/signup/user
 Content-Type: application/json
 
 {"username":  "John", "password": "hello123"}
+
+<> 2019-11-19T104955.200.json
 
 ###
 #Register Mike as Service_provider.
@@ -1134,8 +1138,10 @@ Content-Type: application/json
 
 {"username":  "Mike", "password": "hello123"}
 
+<> 2019-11-19T105004.200.json
+
 ###
-POST http://localhost:8888/login
+POST http://localhost:8080/login
 Content-Type: application/json
 
 {
@@ -1143,14 +1149,54 @@ Content-Type: application/json
   "password": "hello123"
 }
 
+<> 2019-11-19T105131.200.json
+<> 2019-11-19T105018.200.json
+<> 2019-11-19T104934.401.json
+<> 2019-11-19T104912.401.json
+<> 2019-11-19T104906.401.json
+<> 2019-11-19T104518.401.json
+<> 2019-11-19T104214.401.json
+<> 2019-11-19T104143.401.json
+<> 2019-11-19T104126.401.json
+
 ###
-POST http://localhost:8888/login
+POST http://localhost:8080/login
 Content-Type: application/json
 
 {
   "username": "Mike",
   "password": "hello123"
 }
+
+<> 2019-11-19T105100.200.json
+<> 2019-11-19T105048.200.json
+
+###
+###
+POST http://localhost:8080/requests/api/submit
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJKb2huIiwibmJmIjoxNTc0MTkzMDkwLCJyb2xlcyI6WyJ1c2VyIl0sImlzcyI6InVzZXJzLXNlcnZpY2VzIiwiZXhwIjoxNTc0MTk2NjkwLCJpYXQiOjE1NzQxOTMwOTB9.f_jHKpPZWX9tfTruxCBPDYg_1Qi0rvxtWBrRTF0iyNQ
+
+{
+     "type":"Maintenance",
+     "title":"Maintenance",
+     "detail":"A Full Maintenance for my apartement",
+      "city":"yourCity"
+}
+
+###
+POST http://localhost:8080/offers/api/submit
+Content-Type: application/json
+Authorization: Bearer token
+{
+   "requestNumber": "requestnumber",
+    "message": "",
+    "price": 500
+}
+
+###
+GET http://localhost:80/api/item
+Accept: application/json
 
 ###
 
