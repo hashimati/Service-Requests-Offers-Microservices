@@ -1087,25 +1087,37 @@ To start Eureka, run this command from Eureka directory:
 ```shell
 > gradlew bootRun
 ```
+
+
 ## Trying Services
 1. Creating User: 
 ```
-curl --header "X-MyHeader: 123" www.google.com
+//to be provided
 ```
 2. Creating Service Provider:
+```
+//to be provided
+```
 3. Login: 
-curl --user name:password http://www.example.com
-
+```
+To be provided. 
+```
 4. Submitting Requests: 
-curl -X POST --data "birthyear=1905&press=%20OK%20"  http://www.example.com/when.cgi
-
+```
+To be provided
+```
 5. Getting Offers: 
-
+```
+To be provided
+```
 6. Submiting Offer: 
-curl -X POST --header "Authorization: Bearer jwtToken"  --data "x=sadfj&y=slkdfj" http://example.com
-
+```
+To be provided
+```
 7. Accepting Offer: 
-
+```
+To be provided
+```
 ## Conclusion
 
 Microservices development is a big topic. This article covers the fundamentals of Microservices development in the Micronaut frameworks by implementing the scope of the requirements story only. There are many concepts which you need to consider when you develop Microservices Applications: 
