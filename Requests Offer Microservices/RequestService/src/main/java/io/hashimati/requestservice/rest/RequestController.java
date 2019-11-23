@@ -82,22 +82,14 @@ public class RequestController {
     @Secured({Roles.USER})
     @Get("/requests/reject/{requestId}/{offerId}")
     public Single<String> rejectOffer(@PathVariable(value = "requestId") String requestId, @PathVariable(value = "offerId") String offerId, Principal principal, @Header("Authorization") String authorization){
-        if(principal.getName().toLowerCase().equalsIgnoreCase(requestId.substring(0, requestId.indexOf("_")))){         
-
-
             return offersClient.rejectOffer(requestId, offerId, authorization); 
-        }
-        else 
-            return Single.just("failed"); 
- 
     }
     
     @Secured({Roles.USER})
     @Get("/requests/accept/{requestId}/{offerId}")
     public Single<String> acceptOffer(@PathVariable(value = "requestId") String requestId, @PathVariable(value = "offerId") String offerId,Principal principal,  @Header("Authorization") String authorization)
     {
-        if(principal.getName().toLowerCase().equalsIgnoreCase(requestId.substring(0, requestId.indexOf("_")))){         
-        
+ 
             Single<String> acceptingOfferMessage =  offersClient.acceptOffer(requestId, offerId, authorization);
 
             if(acceptingOfferMessage.blockingGet().toLowerCase().contains("success"))
@@ -107,9 +99,7 @@ public class RequestController {
             }
             else 
                 return Single.just("failed"); 
-        }
-        else 
-            return Single.just("failed"); 
+       
     }
     
     @Secured({Roles.USER})

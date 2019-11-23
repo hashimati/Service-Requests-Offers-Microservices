@@ -36,7 +36,7 @@ public class OfferController {
 
     @Secured({Roles.SERVICE_PROVIDER})
     @Post("/submit")
-    public Single<Offer> saveRequest(@Body Offer offer, Principal principal,  @Header("Authorization") String authorization)
+    public Single<Offer> saveOffer(@Body Offer offer, Principal principal,  @Header("Authorization") String authorization)
     {
         offer.setProviderName(principal.getName());   
         return offerServices.save(offer, authorization);
