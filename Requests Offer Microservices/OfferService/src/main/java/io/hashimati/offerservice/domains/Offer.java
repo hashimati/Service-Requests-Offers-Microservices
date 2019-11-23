@@ -16,7 +16,7 @@ import lombok.ToString;
 @ToString
 @EqualsAndHashCode
 public class Offer {
-    private String id, providerName, message, requestNumber;
+    private String id, providerName, message, requestNumber, requesterName;
     private double price; 
     private OfferStatus status = OfferStatus.SENT;
     private Date 

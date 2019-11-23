@@ -55,15 +55,16 @@ public class OfferServices {
     }
     public Single<Offer> save(Offer offer, String token){
         
-        Single<Request> request = requestsClient.findRequestByNo(offer.getRequestNumber(), token);
+        Request request = requestsClient.findRequestByNo(offer.getRequestNumber(), token).blockingGet();
                 
-        if(request.blockingGet().getStatus() == RequestStatus.INITIATED){
+        if(request.getStatus() == RequestStatus.INITIATED){
         
         Long i = Single.fromPublisher(getCollection().countDocuments(new BsonDocument()
                     .append("providerName", new BsonString(offer.getProviderName()))))
                     .blockingGet();  
 
         offer.setId(offer.getProviderName() + "_" + (i.longValue() + 1) ); 
+        offer.setRequesterName(request.getRequesterName());
         return Single.fromPublisher(getCollection().insertOne(offer))
                 .map(success->offer);
         }
@@ -98,14 +99,18 @@ public class OfferServices {
 
     }
 	public Single<String> takeAction(String requestId, String offerId, OfferStatus offerStatus,String username){
+    
         BsonDocument filter = new BsonDocument()
         .append("_id", new BsonString(offerId)) 
-        .append("orderNumber", new BsonString(requestId))
-        .append("requesterName",new BsonString(username)); 
-        
+        .append("requestNumber", new BsonString(requestId))
+        .append("requesterName", new BsonString(username)); 
+
+
         Offer offer = findAsSingle(filter).blockingGet();
+
         offer.setStatus(offerStatus); 
         offer.setLastUpdate(new Date()); 
+
         return Single.fromPublisher(getCollection().findOneAndReplace(filter, offer))
         .map(x->"Success")
         .onErrorReturnItem("failed");  

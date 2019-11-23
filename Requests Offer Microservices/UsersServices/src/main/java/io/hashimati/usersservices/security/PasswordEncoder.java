@@ -1,8 +1,5 @@
 package io.hashimati.usersservices.security;
 
-import javax.inject.Qualifier;
-import javax.inject.Singleton;
-
 import org.jasypt.util.password.StrongPasswordEncryptor;
 
 import io.micronaut.context.annotation.Factory;
@@ -21,8 +18,4 @@ public class PasswordEncoder  {
         return new StrongPasswordEncryptor(); 
     }
     
-
-
-
-   
 }

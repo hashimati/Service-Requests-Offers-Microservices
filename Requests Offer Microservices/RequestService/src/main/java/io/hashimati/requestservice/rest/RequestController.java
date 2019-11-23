@@ -82,30 +82,44 @@ public class RequestController {
     @Secured({Roles.USER})
     @Get("/requests/reject/{requestId}/{offerId}")
     public Single<String> rejectOffer(@PathVariable(value = "requestId") String requestId, @PathVariable(value = "offerId") String offerId, Principal principal, @Header("Authorization") String authorization){
+        if(principal.getName().toLowerCase().equalsIgnoreCase(requestId.substring(0, requestId.indexOf("_")))){         
 
-        return offersClient.rejectOffer(requestId, offerId, authorization); 
+
+            return offersClient.rejectOffer(requestId, offerId, authorization); 
+        }
+        else 
+            return Single.just("failed"); 
+ 
     }
     
     @Secured({Roles.USER})
     @Get("/requests/accept/{requestId}/{offerId}")
-    public Single<String> acceptOffer(@PathVariable(value = "requestId") String requestId, @PathVariable(value = "offerId") String offerId, @Header("Authorization") String authorization)
+    public Single<String> acceptOffer(@PathVariable(value = "requestId") String requestId, @PathVariable(value = "offerId") String offerId,Principal principal,  @Header("Authorization") String authorization)
     {
-        Single<String> acceptingOfferMessage =  offersClient.acceptOffer(requestId, offerId, authorization);
+        if(principal.getName().toLowerCase().equalsIgnoreCase(requestId.substring(0, requestId.indexOf("_")))){         
+        
+            Single<String> acceptingOfferMessage =  offersClient.acceptOffer(requestId, offerId, authorization);
 
-        if(acceptingOfferMessage.blockingGet().toLowerCase().contains("success"))
-        {
+            if(acceptingOfferMessage.blockingGet().toLowerCase().contains("success"))
+            {
 
-            return requestService.takeAction(requestId, RequestStatus.DONE); 
+                return requestService.takeAction(requestId, RequestStatus.DONE); 
+            }
+            else 
+                return Single.just("failed"); 
         }
-        return Single.just("failed"); 
+        else 
+            return Single.just("failed"); 
     }
+    
     @Secured({Roles.USER})
     @Get("/offers/{requestNo}")
     public Flowable<Offer> getOffers(@PathVariable("requestNo") String requestNo,Principal principal,  @Header("Authorization") String authentication)
     {
 
-        if(principal.getName().toLowerCase().equals
-        (requestNo.substring(0, requestNo.indexOf("_")))){         
+
+
+        if(principal.getName().toLowerCase().equalsIgnoreCase(requestNo.substring(0, requestNo.indexOf("_")))){         
             return offersClient.findOffersByRequestNo(requestNo, authentication); 
         }
         return Flowable.just(null); 

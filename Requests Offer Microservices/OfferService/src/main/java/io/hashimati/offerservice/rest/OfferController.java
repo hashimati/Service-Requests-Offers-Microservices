@@ -56,14 +56,17 @@ public class OfferController {
         return offerServices.findOffersByRequestNo(requestId); 
     }
 
-    @Secured({Roles.USER})
+    @Secured({Roles.USER, Roles.SERVICE_PROVIDER})
     @Get("/offers/reject/{requestId}/{offerId}")
     public Single<String> rejectOffer(@PathVariable(value = "requestId") String requestId, @PathVariable(value = "offerId") String offerId, Principal principal)
     {
+
+
+        
         return offerServices.takeAction(requestId, offerId, OfferStatus.REJECTED, principal.getName()); 
     }
     
-    @Secured({Roles.USER})
+     @Secured({Roles.USER})
      @Get("/offers/accept/{requestId}/{offerId}")
 	public Single<String> acceptOffer(@PathVariable(value = "requestId") String requestId, @PathVariable(value = "offerId") String offerId, Principal principal){
         return offerServices.takeAction(requestId, offerId, OfferStatus.ACCEPTED, principal.getName()); 

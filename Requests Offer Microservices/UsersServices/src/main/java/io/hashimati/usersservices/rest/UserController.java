@@ -61,7 +61,4 @@ public class UserController {
         }
         return Single.just("Invalid Request"); 
     }
-    
-
-
 }

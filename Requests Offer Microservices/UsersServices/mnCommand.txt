@@ -1,1 +1,1 @@
-mn create-app io-hashimati-usersservices --profile service --lang java --build gradle--features security-jwt --features discovery-eureka
+mn create-app io-hashimati-usersservices --profile service --lang java --build gradle --features security-jwt --features discovery-eureka
