@@ -48,8 +48,9 @@ dependencies {
 	// compile 'io.micronaut.configuration:micronaut-flyway'
 	compile 'io.micronaut.configuration:micronaut-liquibase'
 
-	// https://mvnrepository.com/artifact/org.springframework.security/spring-security-crypto
-	compile group: 'org.springframework.security', name: 'spring-security-crypto', version: '5.2.0.RELEASE'
+	// https://mvnrepository.com/artifact/org.jasypt/jasypt
+	compile group: 'org.jasypt', name: 'jasypt', version: '1.9.3'
+
 	
 	// https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
 	compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.10.0'
